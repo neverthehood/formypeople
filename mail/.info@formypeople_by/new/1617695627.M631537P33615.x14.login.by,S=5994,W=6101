@@ -1,0 +1,107 @@
+Return-Path: <axiom.genius@gmail.com>
+Delivered-To: info@formypeople.by
+Received: from x14.login.by
+	by x14.login.by with LMTP
+	id OFs6I4sTbGBPgwAACTCpiQ
+	(envelope-from <axiom.genius@gmail.com>)
+	for <info@formypeople.by>; Tue, 06 Apr 2021 10:53:47 +0300
+Return-path: <axiom.genius@gmail.com>
+Envelope-to: info@formypeople.by
+Delivery-date: Tue, 06 Apr 2021 10:53:47 +0300
+Received: from mail-qt1-f171.google.com ([209.85.160.171]:43641)
+	by x14.login.by with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.94)
+	(envelope-from <axiom.genius@gmail.com>)
+	id 1lTgWu-0004OR-SB
+	for info@formypeople.by; Tue, 06 Apr 2021 10:53:47 +0300
+Received: by mail-qt1-f171.google.com with SMTP id s2so10517040qtx.10
+        for <info@formypeople.by>; Tue, 06 Apr 2021 00:53:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=6+Nc3AQ9Lm0wQOLKcmVwSKOvf2vRnbH9MxS8MAlXoVQ=;
+        b=cJHpG9BKbr1cjcnaPHOQZkAT00CVDYKGR2Lku87501+H9AfNUM1yJjCbjhMOHivN+P
+         n+Xq9/x/AkBBO0aCj3IBMlsEuwdLaI4WqmocABxDObUbHYUI3aHGj7MTikDupSwdYSod
+         5+EKXOYcmVDSv7tF0LRRjhkwCORszfI9PLt5YZifXp7Xn03qduUMS5a//h5QKP7ZmIuc
+         2ExQle8K/9LUzITy9G9z0O9st/3oLZ9A/4NCJ6nAKJSWih5QtKoIbxQb8epGkz8x5kp1
+         kRdoC6pinKI8N8d7oLpTJuIn0hRopNoEU2Qu9Wm4k6S7T1DnUJpU1dbNqyfn5sJX3RIv
+         7uLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=6+Nc3AQ9Lm0wQOLKcmVwSKOvf2vRnbH9MxS8MAlXoVQ=;
+        b=ifHiUKPf4porNvSlbuoaPvC3Ms+4nzIo5o8C6YE8ux29oOHD1saTQi/dyyL4o/iB/a
+         KA7hZtZSAED0e85IHw7lRa+MRwhp8kOQ5bSd76HQUSmMUkmI1XdcJqdKy5PtVQ0cVCO0
+         zc7HxxKG2T+STgHkodwt7AcGACO9h013hAVMSM+dKL6wvfCK2XZT5LVbaHlFhk5isH1E
+         THvYKZ1eqUNagj8jbXloTnfkrZRTDBe1U7o1621/7GULylsAd33A9pBrQE8ys7vYwgse
+         VIMyEWjeERlIi3D27YMVhml6dsXZup1eC1GtdnTnLGzWbLxqINkMUwFSgSxCX6qNVqGh
+         GnCA==
+X-Gm-Message-State: AOAM531NRPPZPqu6br8YsG3Ax+5VZUeNUpfWmT/RpdtCYwERL6FlZxoQ
+	BGlL/VN2sSddepH9qAeFu4RZSxw9BlQxAGrNs9akQcEj
+X-Google-Smtp-Source: ABdhPJx35ZHPKUmcqiJ3vzuG0IRYB6jdwO49Yd3c7QUDAXpam2vOx6UhvSChd5v75W60059Ard87wOfN60s16jNeABE=
+X-Received: by 2002:ac8:754f:: with SMTP id b15mr26200923qtr.115.1617695582594;
+ Tue, 06 Apr 2021 00:53:02 -0700 (PDT)
+MIME-Version: 1.0
+From: Alex AxiomCMS <axiom.genius@gmail.com>
+Date: Tue, 6 Apr 2021 10:52:35 +0300
+Message-ID: <CAEXxe7qXpe=_+vYveL=dq10zBy3O39_1LSmCAwtg+t9XWSTVBA@mail.gmail.com>
+Subject: =?UTF-8?B?0J/RgNC+0LLQtdGA0LrQsCDQv9C+0YfRgtGL?=
+To: info@formypeople.by
+Content-Type: multipart/alternative; boundary="0000000000008e2b3f05bf491ae5"
+X-Spam-Status: No, score=-0.2
+X-Spam-Score: -1
+X-Spam-Bar: /
+X-Ham-Report: Spam detection software, running on the system "x14.login.by",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ root\@localhost for details.
+ Content preview:  Проверяем, как сработает переадресация
+    почты на gmail. Если все ок, то письмо должно
+    будет пройти фильтры и добр� [...] 
+ Content analysis details:   (-0.2 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+  0.0 FREEMAIL_FROM          Sender email is commonly abused enduser mail
+                             provider
+                             [axiom.genius[at]gmail.com]
+ -0.0 SPF_PASS               SPF: sender matches SPF record
+  0.0 HTML_MESSAGE           BODY: HTML included in message
+  0.1 DKIM_SIGNED            Message has a DKIM or DK signature, not necessarily
+                             valid
+ -0.1 DKIM_VALID             Message has at least one valid DKIM or DK signature
+ -0.1 DKIM_VALID_EF          Message has a valid DKIM or DK signature from
+                             envelope-from domain
+ -0.1 DKIM_VALID_AU          Message has a valid DKIM or DK signature from
+                             author's domain
+X-Spam-Flag: NO
+
+--0000000000008e2b3f05bf491ae5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+0J/RgNC+0LLQtdGA0Y/QtdC8LCDQutCw0Log0YHRgNCw0LHQvtGC0LDQtdGCINC/0LXRgNC10LDQ
+tNGA0LXRgdCw0YbQuNGPINC/0L7Rh9GC0Ysg0L3QsCBnbWFpbC4NCtCV0YHQu9C4INCy0YHQtSDQ
+vtC6LCDRgtC+INC/0LjRgdGM0LzQviDQtNC+0LvQttC90L4g0LHRg9C00LXRgiDQv9GA0L7QudGC
+0Lgg0YTQuNC70YzRgtGA0Ysg0Lgg0LTQvtCx0YDQsNGC0YzRgdGPINC00L4g0LLQsNGI0LXQuQ0K
+0L/QvtGH0YLRiy4g0JLRgNC10LzRjyDQvtGC0L/RgNCw0LLQutC4IDEwOjUyLg0KDQoNCg0KLS0g
+DQrQoSDRg9Cy0LDQttC10L3QuNC10LwsDQrQkNC70LXQutGB0LDQvdC00YAg0JrQvtCy0LDQu9C1
+0YDQvtCyLg0KDQrQotC10LvQtdGE0L7QvSAoVmliZXIpOiArMzc1MjkgNjMxLTIwLTMzDQpFLW1h
+aWw6IGF4aW9tLmdlbml1c0BnbWFpbC5jb20NCg==
+--0000000000008e2b3f05bf491ae5
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBkaXI9Imx0ciI+PGRpdj7Qn9GA0L7QstC10YDRj9C10LwsINC60LDQuiDRgdGA0LDQsdC+
+0YLQsNC10YIg0L/QtdGA0LXQsNC00YDQtdGB0LDRhtC40Y8g0L/QvtGH0YLRiyDQvdCwIGdtYWls
+LsKgPGJyPtCV0YHQu9C4INCy0YHQtSDQvtC6LCDRgtC+INC/0LjRgdGM0LzQviDQtNC+0LvQttC9
+0L4g0LHRg9C00LXRgiDQv9GA0L7QudGC0Lgg0YTQuNC70YzRgtGA0Ysg0Lgg0LTQvtCx0YDQsNGC
+0YzRgdGPINC00L4g0LLQsNGI0LXQuSDQv9C+0YfRgtGLLiDQktGA0LXQvNGPINC+0YLQv9GA0LDQ
+stC60LggMTA6NTIuPC9kaXY+PGRpdj48YnI+PC9kaXY+PGJyIGNsZWFyPSJhbGwiPjxkaXY+PGJy
+PjwvZGl2Pi0tIDxicj48ZGl2IGRpcj0ibHRyIiBjbGFzcz0iZ21haWxfc2lnbmF0dXJlIiBkYXRh
+LXNtYXJ0bWFpbD0iZ21haWxfc2lnbmF0dXJlIj48ZGl2IGRpcj0ibHRyIj7QoSDRg9Cy0LDQttC1
+0L3QuNC10LwswqA8YnI+0JDQu9C10LrRgdCw0L3QtNGAINCa0L7QstCw0LvQtdGA0L7Qsi4gwqA8
+YnI+PGJyPtCi0LXQu9C10YTQvtC9IChWaWJlcik6ICszNzUyOSA2MzEtMjAtMzM8ZGl2PkUtbWFp
+bDogPGEgaHJlZj0ibWFpbHRvOmF4aW9tLmdlbml1c0BnbWFpbC5jb20iIHRhcmdldD0iX2JsYW5r
+Ij5heGlvbS5nZW5pdXNAZ21haWwuY29tPC9hPsKgPC9kaXY+PC9kaXY+PC9kaXY+PC9kaXY+DQo=
+--0000000000008e2b3f05bf491ae5--

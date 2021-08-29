@@ -1,0 +1,6 @@
+<Files *.ini> 
+ Order deny,allow 
+ Deny from all 
+ </Files>
+# LOCK DIRECTORY VIEW
+Options All -Indexes

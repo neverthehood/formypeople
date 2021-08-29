@@ -1,0 +1,41 @@
+<?php
+class region{
+
+
+    static function managerLeftTree($alias){
+        $out='';
+        $array=array(
+            array('id'=>5, 'alias'=>'articles', 'name'=>'Статьи'),
+            array('id'=>37, 'alias'=>'clients', 'name'=>'Юридические лица'),
+            array('id'=>38, 'alias'=>'articles', 'name'=>'Частные лица')
+        );
+
+        $out.='<div class="cmstree" id="tree" style="cursor:pointer;">
+        <ul id="cattree">
+            <li id="ctl4">
+                <i id="a4" class="y"></i>
+                <b id="cn4">Каталог менеджера</b>';
+
+                foreach($array AS $val){
+                    $class='y';
+                    $folderStyle='';
+                    if($val['alias']==$alias) {
+                        $class.=' a';
+                        $folderStyle='style="color: rgb(234, 83, 0);"';
+                    }
+                    $out.='<span id="plus'.$val['id'].'" class="show minus" onclick="trChang('.$val['id'].')"></span>
+                <ul style="display:block" id="c'.$val['id'].'">
+                    <li id="ctl'.$val['id'].'">
+                        <i id="a'.$val['id'].'" class="'.$class.'"></i>
+                        <b id="cn'.$val['id'].'" onclick="catOpen('.$val['id'].')" '.$folderStyle.'>'.$val['name'].'</b>
+                    </li>
+                </ul>';
+                }
+
+            $out.='</li>
+        </ul></div>';
+
+        return $out;
+    }
+
+}

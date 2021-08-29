@@ -1,0 +1,455 @@
+<?php
+class cabinet{
+
+    static function folderPrepare($item){
+        $workCat=floor($item/100);
+        // Проверим, существует ли папки для хранения файлов
+        if(!file::folderExists($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog')) mkdir($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog',0777);
+        if(!file::folderExists($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat)) mkdir($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat,0777);
+        return $workCat;
+    }
+	
+	static function isChecked($value){
+		if($value==1) return ' checked="checked" ';
+		else return ' ';
+	}
+	
+	static function showCheckbox($value){
+		if($value==1) return '<i class="ic-checked"></i>';
+		else return '<i class="ic-unchecked"></i>';
+	}
+	
+	// Возвращает список гостей
+	static function guestList($project){
+		global $settings;
+		$out='';
+		$array=mysql::getArray("SELECT * FROM 
+		`catalog_multidata` AS t1,
+		`catalog_data_user` AS t2,
+		`catalog_entity` AS t3 
+		WHERE
+			t1.entity_id=".$project."
+		AND t1.attribute_id=358 
+		AND t2.id=t1.value 
+		AND t3.id=t2.id 
+		ORDER BY t2.id DESC");
+		
+		$dostup=array(
+		    'docs'=>'Документы',
+		    'pay'=>'Оплата',
+		    'gallery'=>'Галерея',
+		    'mess'=>'Сообщения',
+		    'task'=>'Задачи',
+		    'contact'=>'Контакты',
+		    'control'=>'Контроль строительства'
+		);
+		if($array!=false){
+			$out.='<table style="width:100%;">
+			<tr>
+				<th>Имя пользователя</th>
+				<th>Адрес / Доступ</th>
+				<th>Истекает</th>
+				<th></th>
+			</tr>';
+			foreach($array AS $val){
+			    $ds=array();
+			    foreach($dostup AS $k=>$v){
+			        if($val['g_'.$k]==1) $ds[]=$v;
+			    }
+				list($y,$m,$d)=explode('-',$val['expire']);
+				$out.='<tr><td style="width:120px;"><b>'.$val['name'].'</b></td><td><input type="text" style="width:100%; color:#2196F3; font-size:12px; cursor:pointer;" title="Скопировать" onClick=\'setClipboardText("'.$settings['protocol'].$settings['siteUrl'].'/guest/'.$val['md5pass'].'/")\' value="'.$settings['protocol'].$settings['siteUrl'].'/guest/'.$val['md5pass'].'/"><br><span style="color:#777777; font-size:13px;">'.implode(', ',$ds).'</span></td><td>'.$d.'.'.$m.'.'.$y.'</td><td><i class="ic-edit" title="Изменить" onClick="ajaxGet(\'editGuest?='.$val['id'].'&project='.$project.'\')"></i></td></tr>';
+			}
+			$out.='</table>';
+		}
+		return $out;
+	}
+	
+	// Визитка юзера
+	static function card($array){
+		global $settings;
+
+		$clientAvatar='<i class="userIcon ic-user color-red" style="float:left;"></i>';
+		if($array['photo']!=''){
+			if(file_exists($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.floor($array['id']/100).'/'.str_replace('.jpg','sys.jpg',$array['photo']))){
+				$clientAvatar='<img src="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.floor($array['id']/100).'/'.str_replace('.jpg','sys.jpg',$array['photo']).'" alt="'.htmlspecialchars($array['name']).'">';
+			}
+		}
+		$tel='';
+		if(strlen($array['tel'])>=7) $tel='<div><i class="ic-phone"></i><span>'.$array['tel'].'</span></div>';
+		$mail='';
+		if(strlen($array['email'])>=7) $mail='<div><i class="ic-mail"></i><a href="mailto:'.trim($array['email']).'">'.$array['email'].'</a></div>';
+		return '<div class="four columns businesscard">
+			<div class="tablecol">'.$clientAvatar.'</div>
+			<div class="tablecol">
+				<div><b>'.$array['name'].'</b></div>
+				<div class="cardPos">'.$array['position'].'</div>
+				'.$tel.$mail.'
+			</div>
+		</div>';
+	}
+
+
+	static function elementFiles($id, $attributeId, $prjForm='', $atrArray=false){
+	    global $settings;
+	    $out='';
+	    if($atrArray==false){
+	        $atrArray=mysql::getArray("SELECT alias,name,multiple,dop FROM `catalog_attributes` WHERE id=".escape($attributeId)." LIMIT 1",true);
+	    }
+	    // Узнаем, есть ли файлы, присоединенные к сущности
+	    $array=mysql::getArray("SELECT * FROM `catalog_file` WHERE entity_id=".$id." ORDER BY `order` ASC");
+
+	    $extList=array(
+	        'zip'=>'ic-file-zip',
+	        'rar'=>'ic-file-zip',
+	        '7z'=>'ic-file-zip',
+	        'txt'=>'ic-file-text2',
+	        'pdf'=>'ic-file-pdf',
+	        'doc'=>'ic-file-word',
+	        'docx'=>'ic-file-word',
+	        'xls'=>'ic-file-excel',
+	        'xlsx'=>'ic-file-excel',
+	        'txt'=>'ic-file-other',
+	        'rtf'=>'ic-file-other',
+	        'xml'=>'ic-file-other'
+	    );
+	    //if($array!=false){
+	        $images='';
+	        $docs='';
+	        $srcFolder=floor($id/100);
+
+	        if($array!=false){
+                $out='<div class="flist">';
+                foreach($array AS $val){
+                    if($val['type']=='image'){
+                        $images.='<div id="tr'.$val['id'].'" class="imgdiv">
+                            <img src="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.$srcFolder.'/'.$val['file'].'sys.jpg" alt="">
+                            <a rel="iLoad|image" href="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.$srcFolder.'/'.$val['file'].'.jpg"><i class="ic-eye view"></i></a>
+                            <i class="ic-delete" onClick="fileDelete('.$val['id'].')"></i>
+                            <div><b>'.mb_strtoupper($val['ext'],'utf-8').'</b><span>'.file::bytes($val['filesize'],1).'</span></div>
+                        </div>';
+                    }
+                    else {
+                        if(isset($extList[$val['ext']])){
+                            $icon=$extList[$val['ext']];
+                        }
+                        else $icon='ic-file-other';
+                        $docs.='<div id="tr'.$val['id'].'" class="fldiv">
+                            <a href="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.$srcFolder.'/'.$val['file'].'.'.$val['ext'].'" download="'.$val['name'].'.'.$val['ext'].'"><i class="fileicon '.$icon.'"></i></a>
+                            <i class="ic-delete" onClick="fileDelete('.$val['id'].')"></i>
+                            <div><b>'.mb_strtoupper($val['ext'],'utf-8').'</b><span>'.file::bytes($val['filesize'],1).'</span></div>
+                        </div>';
+                    }
+                }
+                $out.=$images.$docs.'</div>';
+            }
+
+	        if($id==0) $click='';
+            else $click=' onChange="forcePost(\'filesUpload?='.$attributeId.'&act=designSave\',\'designForm\',\'files'.$attributeId.'\',\'AJAX\')"';
+            if($atrArray['multiple']==1) $click.=' multiple="multiple" ';
+
+            $out='<div class="row" id="files'.$attributeId.'">'.$out.'</div>';
+
+	        //if($atrArray['multiple']==1 || $array==false) $out='<div class="row"><input type="file" name="'.$attributeId.'[]" '.$click.'></div>';
+	    //}
+	    return $out;
+	}
+
+    static function elementFilesSimple($id, $attributeId, $prjForm='', $atrArray=false){
+        global $settings;
+        $out='';
+        if($atrArray==false){
+            $atrArray=mysql::getArray("SELECT alias,name,multiple,dop FROM `catalog_attributes` WHERE id=".escape($attributeId)." LIMIT 1",true);
+        }
+        // Узнаем, есть ли файлы, присоединенные к сущности
+        $array=mysql::getArray("SELECT * FROM `catalog_file` WHERE entity_id=".$id." ORDER BY `order` ASC");
+
+        $extList=array(
+            'zip'=>'ic-file-zip',
+            'rar'=>'ic-file-zip',
+            '7z'=>'ic-file-zip',
+            'txt'=>'ic-file-text2',
+            'pdf'=>'ic-file-pdf',
+            'doc'=>'ic-file-word',
+            'docx'=>'ic-file-word',
+            'xls'=>'ic-file-excel',
+            'xlsx'=>'ic-file-excel',
+            'rtf'=>'ic-file-text2',
+            'xml'=>'ic-file-other'
+        );
+
+        $images='';
+        $docs='';
+        $srcFolder=floor($id/100);
+
+        if($array!=false){
+            $out='<div class="flist">';
+            foreach($array AS $val){
+                if($val['type']=='image'){
+                    $images.='<div id="tr'.$val['id'].'" class="imgdiv">
+                            <img src="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.$srcFolder.'/'.$val['file'].'sys.jpg" alt="">
+                            <a rel="iLoad|image" href="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.$srcFolder.'/'.$val['file'].'.jpg"><i class="ic-eye view"></i></a>
+                            <div><b>'.mb_strtoupper($val['ext'],'utf-8').'</b><span>'.file::bytes($val['filesize'],1).'</span></div>
+                        </div>';
+                }
+                else {
+                    if(isset($extList[$val['ext']])){
+                        $icon=$extList[$val['ext']];
+                    }
+                    else $icon='ic-file-other';
+                    $docs.='<div id="tr'.$val['id'].'" class="fldiv">
+                            <a href="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.$srcFolder.'/'.$val['file'].'.'.$val['ext'].'" download="'.$val['name'].'.'.$val['ext'].'"><i class="fileicon '.$icon.'"></i></a>
+                            <div><b>'.mb_strtoupper($val['ext'],'utf-8').'</b><span>'.file::bytes($val['filesize'],1).'</span></div>
+                        </div>';
+                }
+            }
+            $out.=$images.$docs.'</div>';
+        }
+
+        $out='<div class="row" id="files'.$attributeId.'">'.$out.'</div>';
+        return $out;
+    }
+
+	// Отображение списка файлов сущности
+	static function showFiles($id,$attributeId,$prjForm){
+	    $atrArray=mysql::getArray("SELECT t1.id, t1.alias, t1.name, t1.multiple, t1.dop, t2.entity_type_alias
+	    FROM `catalog_attributes` AS t1,
+	        `catalog_entity_type` AS t2
+	    WHERE t1.id=".escape($attributeId)."
+	    AND t2.id=t1.entity_type_id
+	    LIMIT 1",true);
+        $filelist=self::elementFiles($id,$attributeId,$prjForm,$atrArray);
+        if(strlen($filelist)>=50){
+            return '<tr>
+	        <td><label>'.$atrArray['name'].'</label></td>
+            <td id="files'.$attributeId.'">
+                '.$filelist.'
+            </td>
+	    </tr>';
+        }
+        else return '';
+	}
+
+    // Отображение списка файлов сущности
+    static function showFilesSimple($id,$attributeId,$prjForm){
+        $atrArray=mysql::getArray("SELECT t1.id, t1.alias, t1.name, t1.multiple, t1.dop, t2.entity_type_alias
+	    FROM `catalog_attributes` AS t1,
+	        `catalog_entity_type` AS t2
+	    WHERE t1.id=".escape($attributeId)."
+	    AND t2.id=t1.entity_type_id
+	    LIMIT 1",true);
+        $filelist=self::elementFilesSimple($id,$attributeId,$prjForm,$atrArray);
+        if(strlen($filelist)>=50){
+            return '<tr>
+	        <td><label>'.$atrArray['name'].'</label></td>
+            <td id="files'.$attributeId.'">
+                '.$filelist.'
+            </td>
+	    </tr>';
+        }
+        else return '';
+    }
+
+
+	// Загрузка файлов подключенных к сообщению
+	static function filesUpload($id){
+        if(!empty($_FILES['userfile']['name'])){
+            // Получим текущее значение ORDER
+            $order=onlyDigit(mysql::getValue("SELECT MAX(`order`) FROM `catalog_file` WHERE entity_id=".escape($id)))+1;
+            // Получим значение основного файла
+            $origMainFileName=mysql::getValue("SELECT `files` FROM `catalog_data_message` WHERE id=".$id." LIMIT 1");
+            $workCat=floor($id/100);
+            // Проверим, существует ли папки для хранения файлов
+            if(!file::folderExists($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat)) mkdir($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat,0777);
+
+            // Загружаем файлы
+            foreach($_FILES['userfile']['name'] AS $key=>$val){
+                if($_FILES['userfile']['error'][$key]==0){
+                    // Получаем расширение файла
+                    $ext=file::getExtension($_FILES['userfile']['name'][$key]);
+                    $fname=$id.'_'.time().'_'.$order.'_'.$key;
+                    if($ext=='jpg' || $ext=='jpeg' || $ext=='png'){
+                        $ftype='image';
+                        image::makeSquareIcon($_FILES['userfile']['tmp_name'][$key],$_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat.'/'.$fname.'sys.jpg',120);
+                        image::makeImage($_FILES['userfile']['tmp_name'][$key],$_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat.'/'.$fname.'.jpg',1200,800,90);
+                        $imagesize=$GLOBALS['currentImageWidth'].'x'.$GLOBALS['currentImageHeight'];
+                        image::makeImage($_FILES['userfile']['tmp_name'][$key],$_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat.'/'.$fname.'s.jpg',400,300,90);
+                        $mainFileName=$fname.'.jpg';
+                        $filedesc='';
+                        $fsize=filesize($_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat.'/'.$mainFileName);
+                    }
+                    else {
+                        $ftype='other';
+                        $imagesize='0x0';
+                        $mainFileName=$fname.'.'.$ext;
+                        $fsize=$_FILES['userfile']['size'][$key];
+                        list($filedesc,)=explode('.',$_FILES['userfile']['name'][$key]);
+                        copy($_FILES['userfile']['tmp_name'][$key],$_SERVER['DOCUMENT_ROOT'].'/uploaded/catalog/'.$workCat.'/'.$mainFileName);
+                    }
+                    mysql::query("INSERT INTO `catalog_file` SET `attribute_id`=379, `entity_id`=".$id.", `file`='".$fname."', `ext`='".$ext."', `type`='".$ftype."', `filesize`=".$fsize.", `imagesize`='".$imagesize."', `name`='".$filedesc."', `order`=".$order);
+                    if($origMainFileName==''){
+                        mysql::query("UPDATE `catalog_data_message` SET `files`='".$mainFileName."' WHERE id=".$id." LIMIT 1");
+                        $origMainFileName=$mainFileName;
+                    }
+                    $order++;
+                }
+            }
+        }
+	}
+
+	// Предварительное сохранение сообщение
+	static function messPreSave(){
+	    mysql::query("INSERT INTO `catalog_entity`
+	        SET
+	        `name`='--БЕЗ НАЗВАНИЯ--',
+	        `parent_id`=20,
+	        `entity_type`=43,
+	        `hidden`='1',
+	        `owner`=22");
+	    $id=mysql::insertId();
+
+	    mysql::query("INSERT INTO `catalog_data_message`
+	        SET `id`=".$id.",
+	        `project`=0,
+	        `from`=".$_SESSION['user']['id'].",
+	        `to`=0,
+	        `files`='',
+	        `readed`='0'");
+
+	    mysql::query("INSERT INTO `catalog_text_message`
+	        SET `id`=".$id.",
+        `text`=''");
+        return $id;
+	}
+
+	// Отображение формы отправки сообщения
+	static function messageForm($project, $parent, $return){
+        $out='';
+	    $array['id']=0;
+	    $array['parent_id']=$parent;
+		if(!isset($_SESSION['user']['manager'])){
+			$_SESSION['user']['manager']=mysql::getValue("SELECT client FROM `catalog_data_project` WHERE id=".escape($project)." LIMIT 1");
+		}
+
+	    $out.='<form id="messageForm" method="POST" enctype="multipart/form-data">
+	    <div class="row">
+            <input type="hidden" name="array[parent_id]" value="'.$array['parent_id'].'">
+            <input type="hidden" name="array[id]" value="'.$array['id'].'">
+            <input type="hidden" name="array[date_add]" value="2017-03-13 22:18:56">
+            <input type="hidden" name="action" value="messageSave">
+            <input type="hidden" name="array[name]" value="-сообщение-">
+            <input type="hidden" name="array[project]" value="'.$project.'">
+            <input type="hidden" name="array[from]" value="'.$_SESSION['user']['id'].'">
+            <input type="hidden" name="array[to]" value="'.$_SESSION['user']['manager'].'">
+            <input type="hidden" name="array[return]" value="'.$return.'">
+	    </div>
+	    <div class="row">
+	        <textarea id="msContent" name="array[text]" class="input" style="width:100%; height:120px;"></textarea>
+	    </div>
+	    <div class="row">
+            <div id="filesDiv">
+            </div>
+	    </div>
+	    <div class="row">
+            <label class="button"><input style="display:none;" type="file" multiple="multiple" name="userfile[]" onchange="forcePost(\'messagePreSave\',\'messageForm\',\'filesDiv\')">Добавить файлы</label>
+            <div style="float:right">
+                <div class="button button-primary btn-big" onclick="messageSent()">Отправить</div>
+	        </div>
+        </div>
+
+	    </form>';
+	    return $out;
+	}
+
+
+
+	// Вывод таблицы сообщений
+	static function messages($project, $parent, $template, $p=0, $perPage=10, $reverse=true){
+	    global $settings;
+	    $out='';
+	    $array=mysql::getArray("SELECT SQL_CALC_FOUND_ROWS
+			t1.id,
+			t1.from,
+			t1.to,
+			DATE_FORMAT(t2.date_add, '%d.%m.%Y %H:%i:%s') AS date,
+			t4.photo,
+			t4.position,
+			t14.parent_id AS type,
+			t5.name,
+			t3.text
+		FROM
+			`catalog_data_message` AS t1,
+			`catalog_entity` AS t2,
+			`catalog_text_message` AS t3,
+			`catalog_data_user` AS t4,
+			`catalog_entity` AS t14,
+			`catalog_entity` AS t5
+		WHERE
+				t1.project=".$project."
+			AND t2.id=t1.id
+			AND t2.parent_id=".$parent."
+			AND t3.id=t1.id
+			AND t4.id=t1.from
+			AND t14.id=t4.id
+			AND t5.id=t4.id
+		ORDER BY
+			t1.id DESC
+		LIMIT ".$p*$perPage.", ".$perPage);
+		
+
+
+		if($array!=false){
+		    $count=mysql::foundRows();
+			// Отметим все сообщения как прочитанные, если они адресованы этому пользователю
+			foreach($array AS $val){
+				$ids=array();
+				if($val['to']==$_SESSION['user']['id']){
+					$ids[]=$val['id'];
+				}
+				if(!empty($ids)){
+					mysql::query("UPDATE `catalog_data_message` SET readed='1' WHERE id IN(".implode(",",$ids).")");
+				}
+			}
+			
+			
+            //if($reverse==true) $array=array_reverse($array);
+            $paginator='';
+            if($count>$perPage){
+                $paginator='<div class="row">'.paginate($count, $p, $template, $perPage, 4).'</div>';
+                $out.=$paginator;
+            }
+            foreach($array AS $val){
+                if($val['type']==18) $class="clientBgColor";
+                else $class="adminBgColor";
+                if($val['photo']=="") $photo='<i class="userMessIcon ic-user"></i>';
+                else $photo='<img class="userAvatar" src="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/catalog/'.floor($val['from']/100).'/'.str_replace('.jpg','sys.jpg',$val['photo']).'" alt="">';
+                list($date,$time)=explode(" ",$val['date']);
+
+                $out.='<div class="row message '.$class.'">
+                        <div class="two columns">
+                            '.$photo.'
+                            <b class="uName">'.$val['name'].'</b>
+                        </div>
+                        <div class="ten columns">
+                            <div class="messTime"><i class="ic-calendar"></i><span>'.$date.'</span><i class="ic-clock"></i><span>'.$time.'</span></div>
+                            <div class="messText">'.$val['text'].'</div>
+                            '.self::showFilesSimple($val['id'],379,'').'
+                        </div>
+                    </div>';
+            }
+            $out.=$paginator;
+        }
+        return $out;
+	}
+	
+	
+	// Пересчет оплат проекта и формирование полей оплачено и стоимость
+	static function updateProjectPay($project){
+		$projectCost=mysql::getValue("SELECT cost FROM `catalog_data_project` WHERE id=".escape($project)." LIMIT 1");
+		// Получим сумму всех платежей
+		$sum=mysql::getValue("SELECT SUM(summa) AS summa FROM `catalog_data_oplata` WHERE project=".escape($project));
+		mysql::query("UPDATE `catalog_data_project` SET payed=".escape($sum)." WHERE id=".escape($project)." LIMIT 1");
+	}
+
+
+
+}

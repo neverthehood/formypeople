@@ -1,0 +1,9 @@
+<?php
+class smssubs{
+	static function addSubscribe(){
+		$subs=$_POST['subs'];
+		return array(
+			'smsSubsBody'=>'<p><b>Подписка оформлена. Спасибо!</b></p><p>Управлять своей подпиской на СМС рассылку вы можете в личном кабинете.</p>'
+		);
+	}
+}

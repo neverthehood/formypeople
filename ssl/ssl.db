@@ -1,0 +1,78 @@
+--- 
+files: 
+  certificate: 
+    formypeople_by_bcf46_f4463_1635450087_a074ba330345e6329c89023c9eb53285: 
+      created: '1627677690'
+      domains: 
+        - formypeople.by
+        - mail.formypeople.by
+        - www.formypeople.by
+      ecdsa_curve_name: ~
+      ecdsa_public: ~
+      friendly_name: formypeople.by, mail.formypeople.by и www.formypeople.by
+      id: formypeople_by_bcf46_f4463_1635450087_a074ba330345e6329c89023c9eb53285
+      is_self_signed: 0
+      issuer.commonName: R3
+      issuer.organizationName: Let's Encrypt
+      key_algorithm: rsaEncryption
+      modulus: bcf46a0232c84889acdb642ad26884b79df34e36f8508de4e7ffad6570b77a6cd1fbbc784d628bb6ce3ad1385a523c912cde0de7aee15686f8ecd9f928670e7e3d28484a4032a8fd9fd7a2bf732cd7c560b3ac9928169b61ee25f2bc6460544eb1b119c36546810673d3377bdd8fe97271b7695566776511f2c0dcfd5cd0feb18baf39772551c494dd97a308eecef4903ff8017949412c8e87cc7d67baab429481f8a345b8319121785d40e2ce403bc57584c75753f4c009533ca446d76ad42640e4809accff2015b42afb241f0bba81d6b0528ce43f2fd6b0ecfa2e241e263a1a341f9084cdc9b2cd0eef21e9dbecfd410a2fc4e316c87f0790a263dfcf4463
+      modulus_length: 2048
+      not_after: '1635450087'
+      not_before: '1627674089'
+      serial: 03bdaefb8d0c266d298fc0201d5f81ea30eb
+      signature_algorithm: sha256WithRSAEncryption
+      subject.commonName: formypeople.by
+      validation_type: dv
+    formypeople_by_c979c_27491_1649009941_03d9c46368c9a53a12e6503806f27fb7: 
+      created: '1617473941'
+      domains: 
+        - formypeople.by
+        - mail.formypeople.by
+        - www.formypeople.by
+      ecdsa_curve_name: ~
+      ecdsa_public: ~
+      friendly_name: Cert for “formypeople.by”
+      id: formypeople_by_c979c_27491_1649009941_03d9c46368c9a53a12e6503806f27fb7
+      is_self_signed: 1
+      issuer.commonName: formypeople.by
+      issuer.organizationName: ~
+      key_algorithm: rsaEncryption
+      modulus: c979cb18fb8c4536547d922c3d050ee687c27e1b0de3f7bde61c2876a219128fce29a08f170989a4b52a2dec6f74705962ca24ca7b7dfdc28d8d2072ac169c6d3524f1ad993234e233bccf525baa3212969d25d1ffe1812200a96137be2fe08d14259bfb270b48372901b7f96c523eacb62545e2b41ccd63bcff1487e46310573915a092ec18ff19adaf774e11071062b6b1e423261cbf657d6ab12fb31af6575252b6978e131aa835fac45910c605c5100594fbc2d0714a01b83be920f4599041230dd89f7c11bd9766df5867646d2e364660809b2d2a5c078411640f2364f0d5d095b0a50ae88f1bda964c2b46a832f12e81c6b4e91d192de2400f16c27491
+      modulus_length: 2048
+      not_after: '1649009941'
+      not_before: '1617473941'
+      serial: 0164f477cf
+      signature_algorithm: sha256WithRSAEncryption
+      subject.commonName: formypeople.by
+      validation_type: ~
+  key: 
+    c979c_27491_9da97dedeeee85733db07a91692f158e: 
+      created: '1617473941'
+      ecdsa_curve_name: ~
+      ecdsa_public: ~
+      friendly_name: Key for “formypeople.by”
+      id: c979c_27491_9da97dedeeee85733db07a91692f158e
+      key_algorithm: rsaEncryption
+      modulus: c979cb18fb8c4536547d922c3d050ee687c27e1b0de3f7bde61c2876a219128fce29a08f170989a4b52a2dec6f74705962ca24ca7b7dfdc28d8d2072ac169c6d3524f1ad993234e233bccf525baa3212969d25d1ffe1812200a96137be2fe08d14259bfb270b48372901b7f96c523eacb62545e2b41ccd63bcff1487e46310573915a092ec18ff19adaf774e11071062b6b1e423261cbf657d6ab12fb31af6575252b6978e131aa835fac45910c605c5100594fbc2d0714a01b83be920f4599041230dd89f7c11bd9766df5867646d2e364660809b2d2a5c078411640f2364f0d5d095b0a50ae88f1bda964c2b46a832f12e81c6b4e91d192de2400f16c27491
+      modulus_length: 2048
+indexes: 
+  certificate: 
+    modulus: 
+      bcf46a0232c84889acdb642ad26884b79df34e36f8508de4e7ffad6570b77a6cd1fbbc784d628bb6ce3ad1385a523c912cde0de7aee15686f8ecd9f928670e7e3d28484a4032a8fd9fd7a2bf732cd7c560b3ac9928169b61ee25f2bc6460544eb1b119c36546810673d3377bdd8fe97271b7695566776511f2c0dcfd5cd0feb18baf39772551c494dd97a308eecef4903ff8017949412c8e87cc7d67baab429481f8a345b8319121785d40e2ce403bc57584c75753f4c009533ca446d76ad42640e4809accff2015b42afb241f0bba81d6b0528ce43f2fd6b0ecfa2e241e263a1a341f9084cdc9b2cd0eef21e9dbecfd410a2fc4e316c87f0790a263dfcf4463: 
+        formypeople_by_bcf46_f4463_1635450087_a074ba330345e6329c89023c9eb53285: ~
+      c979cb18fb8c4536547d922c3d050ee687c27e1b0de3f7bde61c2876a219128fce29a08f170989a4b52a2dec6f74705962ca24ca7b7dfdc28d8d2072ac169c6d3524f1ad993234e233bccf525baa3212969d25d1ffe1812200a96137be2fe08d14259bfb270b48372901b7f96c523eacb62545e2b41ccd63bcff1487e46310573915a092ec18ff19adaf774e11071062b6b1e423261cbf657d6ab12fb31af6575252b6978e131aa835fac45910c605c5100594fbc2d0714a01b83be920f4599041230dd89f7c11bd9766df5867646d2e364660809b2d2a5c078411640f2364f0d5d095b0a50ae88f1bda964c2b46a832f12e81c6b4e91d192de2400f16c27491: 
+        formypeople_by_c979c_27491_1649009941_03d9c46368c9a53a12e6503806f27fb7: ~
+    subject.commonName: 
+      formypeople.by: 
+        formypeople_by_bcf46_f4463_1635450087_a074ba330345e6329c89023c9eb53285: ~
+        formypeople_by_c979c_27491_1649009941_03d9c46368c9a53a12e6503806f27fb7: ~
+uniques: 
+  certificate: 
+    friendly_name: 
+      Cert for “formypeople.by”: formypeople_by_c979c_27491_1649009941_03d9c46368c9a53a12e6503806f27fb7
+      formypeople.by, mail.formypeople.by и www.formypeople.by: formypeople_by_bcf46_f4463_1635450087_a074ba330345e6329c89023c9eb53285
+  key: 
+    friendly_name: 
+      Key for “formypeople.by”: c979c_27491_9da97dedeeee85733db07a91692f158e
+    modulus:ecdsa_curve_name:ecdsa_public: 
+      c979cb18fb8c4536547d922c3d050ee687c27e1b0de3f7bde61c2876a219128fce29a08f170989a4b52a2dec6f74705962ca24ca7b7dfdc28d8d2072ac169c6d3524f1ad993234e233bccf525baa3212969d25d1ffe1812200a96137be2fe08d14259bfb270b48372901b7f96c523eacb62545e2b41ccd63bcff1487e46310573915a092ec18ff19adaf774e11071062b6b1e423261cbf657d6ab12fb31af6575252b6978e131aa835fac45910c605c5100594fbc2d0714a01b83be920f4599041230dd89f7c11bd9766df5867646d2e364660809b2d2a5c078411640f2364f0d5d095b0a50ae88f1bda964c2b46a832f12e81c6b4e91d192de2400f16c27491: c979c_27491_9da97dedeeee85733db07a91692f158e

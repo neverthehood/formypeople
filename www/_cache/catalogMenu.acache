@@ -1,0 +1,34 @@
+s:2038:"<div class="cols2">
+					<div class="amhead"><a href="https://formypeople.by/coffee/">Кофе</a><i id="str0" class="ic-right" onClick="subMenuSwitch(0)"></i></div>
+					<div class="smenu" id="smenu0">
+						<div id="smenuBody0">
+							<div class="smDiv"><a href="https://formypeople.by/coffee/brand-8202/">Kitchen Coffee Roasters</a><a href="https://formypeople.by/coffee/brand-8204/">The Welder Catherine</a></div>
+							<div class="smDiv"><a href="https://formypeople.by/coffee/ctype-1076/">Эспрессо</a><a href="https://formypeople.by/coffee/ctype-1077/">Фильтр</a><a href="https://formypeople.by/coffee/ctype-1078/">Кофе в капсулах</a><a href="https://formypeople.by/coffee/ctype-1079/">Растворимый</a></div>
+						</div>
+					</div>
+				</div>
+				<div class="cols1">
+					<div class="amhead"><a href="https://formypeople.by/tea/">Чай</a><i id="str1" class="ic-right" onClick="subMenuSwitch(1)"></i></div>
+					<div class="smenu" id="smenu1">
+						<div id="smenuBody1">
+							<div class="smDiv"><a href="https://formypeople.by/tea/type-1090/">Черный</a><a href="https://formypeople.by/tea/type-1091/">Зеленый</a><a href="https://formypeople.by/tea/type-1092/">Чайный напиток</a></div>
+						</div>
+					</div>
+				</div>
+				<div class="cols3">
+					<div class="amhead"><a href="https://formypeople.by/accesories/">Посуда и аксессуары</a><i id="str2" class="ic-right" onClick="subMenuSwitch(2)"></i></div>
+					<div class="smenu" id="smenu2">
+						<div id="smenuBody2"></div>
+					</div>
+				</div>
+				<div class="cols2 mobileOnly">
+					<div class="amhead">
+						<a href="./home/">Для дома</a>
+						<a href="./office/">Для офиса</a>
+						<a href="./busines/">Для бизнеса</a>
+						<a href="./articles/">Читать</a>
+						<a href="./payment/">Оплата</a>
+						<a href="./delivery/">Доставка</a>
+						<a href="./return/">Возврат</a>
+					</div>
+				</div>";

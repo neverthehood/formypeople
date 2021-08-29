@@ -1,0 +1,543 @@
+AWSTATS DATA FILE 7.7 (build 20180105)
+# If you remove this file, all statistics for date 202107 will be lost/reset.
+# Last config file used to build this data file was /home/formypeo/tmp/awstats/ssl/awstats.formypeople.by.conf.
+
+# Position (offset in bytes) in this file for beginning of each section for
+# direct I/O access. If you made changes somewhere in this file, you should
+# also remove completely the MAP section (AWStats will rewrite it at next
+# update).
+BEGIN_MAP 28
+POS_GENERAL 2015                
+POS_TIME 2688                
+POS_VISITOR 9665                
+POS_DAY 14224               
+POS_DOMAIN 3391                
+POS_LOGIN 3853                
+POS_ROBOT 4008                
+POS_WORMS 4331                
+POS_EMAILSENDER 4462                
+POS_EMAILRECEIVER 4605                
+POS_SESSION 14926               
+POS_SIDER 15106               
+POS_FILETYPES 4740                
+POS_DOWNLOADS 4932                
+POS_OS 4980                
+POS_BROWSER 5216                
+POS_SCREENSIZE 5986                
+POS_UNKNOWNREFERER 6060                
+POS_UNKNOWNREFERERBROWSER 6740                
+POS_ORIGIN 7330                
+POS_SEREFERRALS 7468                
+POS_PAGEREFS 7653                
+POS_SEARCHWORDS 7907                
+POS_KEYWORDS 8059                
+POS_MISC 2352                
+POS_ERRORS 8118                
+POS_CLUSTER 3709                
+POS_SIDER_404 8230                
+END_MAP
+
+# LastLine    = Date of last record processed - Last record line number in last log - Last record offset in last log - Last record signature value
+# FirstTime   = Date of first visit for history file
+# LastTime    = Date of last visit for history file
+# LastUpdate  = Date of last update - Nb of parsed records - Nb of parsed old records - Nb of parsed new records - Nb of parsed corrupted - Nb of parsed dropped
+# TotalVisits = Number of visits
+# TotalUnique = Number of unique visitors
+# MonthHostsKnown   = Number of hosts known
+# MonthHostsUnKnown = Number of hosts unknown
+BEGIN_GENERAL 8
+LastLine 20210801045257 7 770 4503564355280
+FirstTime 20210701162025
+LastTime 20210731144446
+LastUpdate 20210801150911 7 0 6 0 0
+TotalVisits 118                 
+TotalUnique 107                 
+MonthHostsKnown 0                   
+MonthHostsUnknown 120                 
+END_GENERAL
+
+# Misc ID - Pages - Hits - Bandwidth
+BEGIN_MISC 10
+RealPlayerSupport 0 0 0
+FlashSupport 0 0 0
+JavascriptDisabled 0 0 0
+AddToFavourites 0 3 0
+QuickTimeSupport 0 0 0
+JavaEnabled 0 0 0
+TotalMisc 0 0 0
+DirectorSupport 0 0 0
+WindowsMediaPlayerSupport 0 0 0
+PDFSupport 0 0 0
+END_MISC
+
+# Hour - Pages - Hits - Bandwidth - Not viewed Pages - Not viewed Hits - Not viewed Bandwidth
+BEGIN_TIME 24
+0 16 16 326784 4 7 28982
+1 5 5 26635 2 5 15649
+2 10 10 47942 18 19 32112
+3 8 18 658268 2 2 2976
+4 4 24 1252606 0 0 0
+5 3 3 34564 5 6 8928
+6 6 6 31961 4 6 46381
+7 2 2 29233 5 9 59023
+8 11 11 74673 58 69 250743
+9 5 5 63798 4 6 11603
+10 7 7 93033 0 0 0
+11 2 3 34629 5 12 103560
+12 2 4 49249 3 4 5952
+13 2 21 1502747 0 0 0
+14 8 9 85174 4 8 76049
+15 4 24 1252605 9 16 235693
+16 10 10 79780 0 0 0
+17 4 4 21311 3 9 99549
+18 22 36 945064 60 62 102359
+19 28 28 149151 5 7 42937
+20 33 43 761183 62 70 187629
+21 27 42 1023547 15 20 75351
+22 10 11 71917 3 10 68187
+23 7 7 37289 4 8 31678
+END_TIME
+
+# Domain - Pages - Hits - Bandwidth
+# The 25 first Pages must be first (order not required for others)
+BEGIN_DOMAIN 18
+us 117 167 3689784
+by 24 53 1814410
+tr 22 32 705092
+gb 17 17 109140
+ca 12 12 63918
+gr 9 9 122264
+tw 8 8 42616
+eu 6 6 143448
+ar 6 6 31959
+in 4 4 0
+cl 4 24 1252605
+fr 2 2 6507
+nl 1 1 5327
+cn 1 1 23906
+ru 1 1 23908
+dk 1 1 5328
+de 1 1 5328
+ie 0 4 607603
+END_DOMAIN
+
+# Cluster ID - Pages - Hits - Bandwidth
+BEGIN_CLUSTER 0
+END_CLUSTER
+
+# Login - Pages - Hits - Bandwidth - Last visit
+# The 10 first Pages must be first (order not required for others)
+BEGIN_LOGIN 0
+END_LOGIN
+
+# Robot ID - Hits - Bandwidth - Last visit - Hits on robots.txt
+# The 25 first Hits must be first (order not required for others)
+BEGIN_ROBOT 5
+no_user_agent 138 354414 20210731182549 0
+Googlebot/ 54 526120 20210729225313 0
+YandexBot/ 13 129499 20210731182608 0
+Googlebot\-Image/ 4 332211 20210709151133 0
+curl 1 5328 20210709144959 0
+END_ROBOT
+
+# Worm ID - Hits - Bandwidth - Last visit
+# The 5 first Hits must be first (order not required for others)
+BEGIN_WORMS 0
+END_WORMS
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first Hits must be first (order not required for others)
+BEGIN_EMAILSENDER 0
+END_EMAILSENDER
+
+# EMail - Hits - Bandwidth - Last visit
+# The 20 first hits must be first (order not required for others)
+BEGIN_EMAILRECEIVER 0
+END_EMAILRECEIVER
+
+# Files type - Hits - Bandwidth - Bandwidth without compression - Bandwidth after compression
+BEGIN_FILETYPES 7
+woff 9 57717 0 0
+css 9 111384 0 0
+html 122 1099891 0 0
+php 105 554680 0 0
+svg 26 131749 0 0
+png 49 6046309 0 0
+js 29 651413 0 0
+END_FILETYPES
+
+# Downloads - Hits - Bandwidth
+BEGIN_DOWNLOADS 0
+END_DOWNLOADS
+
+# OS ID - Hits
+BEGIN_OS ID - Hits - Pages 13
+Unknown 20 13
+macosx 2 2
+win8.1 3 1
+linux 135 112
+macosx8 1 1
+win10 32 10
+win8 3 3
+macosx11 32 22
+macosx12 2 2
+linuxandroid 45 31
+macosx9 7 7
+ios_iphone 53 18
+win7 14 14
+END_OS
+
+# Browser ID - Hits - Pages
+BEGIN_BROWSER 36
+chrome42.0.2311.90 6 6
+mozilla 5 5
+chrome70.0.3538.80 1 1
+firefox62.0 101 101
+chrome68.0.3440.106 3 3
+chrome76.0.3809.71 12 2
+firefox73.0 1 1
+chrome51.0.2704.84 32 22
+chrome59.0.3071.125 2 2
+chrome91.0.4472.120 25 11
+safari7.0.3 1 1
+msie11.0 16 4
+chrome36.0.1985.125 3 3
+edge16 1 1
+chrome91.0.4472.164 12 2
+chrome40.0.2214.115 3 1
+firefox58.0 3 3
+chrome35.0.1916.47 5 5
+firefox82.0 6 3
+safari13.1.2 24 4
+chrome26.0.1410.65 1 1
+chrome91.0.4472.124 12 2
+firefox68.0 1 1
+safari11.0.3 1 1
+chrome88.0.4324.150 1 1
+firefox57.0 4 4
+netscape5.0 2 2
+chrome57.0.2987.110 1 1
+android 2 2
+Unknown 15 8
+chrome79.0.3945.88 1 1
+chrome89.0.3945.117 1 1
+chrome87.0.4280.88 1 1
+chrome73.0.3683.90 15 15
+safari10.0 1 1
+safari12.1.1 28 13
+END_BROWSER
+
+# Screen size - Hits
+BEGIN_SCREENSIZE 0
+END_SCREENSIZE
+
+# Unknown referer OS - Last visit date
+BEGIN_UNKNOWNREFERER 6
+NetSystemsResearch_studies_the_availability_of_various_services_across_the_internet._Our_website_is_netsystemsresearch.com 20210719182410
+Expanse,_a_Palo_Alto_Networks_company,_searches_across_the_global_IPv4_space_multiple_times_per_day_to_identify_customers&#39;_presences_on_the_Internet._If_you_would_like_to_be_excluded_from_our_scans,_please_send_IP_addresses/domains_to:_scaninfo@paloaltonetworks.com 20210720100407
+Mozilla/5.0_(compatible;_NetcraftSurveyAgent/1.0;__info@netcraft.com) 20210708103532
+Go_http_package 20210718145431
+adreview/1.0 20210703132935
+cortex/1.0 20210703132940
+END_UNKNOWNREFERER
+
+# Unknown referer Browser - Last visit date
+BEGIN_UNKNOWNREFERERBROWSER 5
+NetSystemsResearch_studies_the_availability_of_various_services_across_the_internet._Our_website_is_netsystemsresearch.com 20210719182410
+Expanse,_a_Palo_Alto_Networks_company,_searches_across_the_global_IPv4_space_multiple_times_per_day_to_identify_customers&#39;_presences_on_the_Internet._If_you_would_like_to_be_excluded_from_our_scans,_please_send_IP_addresses/domains_to:_scaninfo@paloaltonetworks.com 20210720100407
+cortex/1.0 20210703132940
+Go_http_package 20210718145431
+adreview/1.0 20210703132935
+END_UNKNOWNREFERERBROWSER
+
+# Origin - Pages - Hits 
+BEGIN_ORIGIN 6
+From0 69 83
+From1 0 0
+From2 8 8
+From3 36 36
+From4 123 222
+From5 0 0
+END_ORIGIN
+
+# Search engine referers ID - Pages - Hits
+BEGIN_SEREFERRALS 2
+www_google_com 2 2
+www_google_com_hk 6 6
+END_SEREFERRALS
+
+# External page referers - Pages - Hits
+# The 25 first Pages must be first (order not required for others)
+BEGIN_PAGEREFS 3
+http://mail.formypeople.by/wp-login.php 33 33
+http://178.172.165.41:80 2 2
+http://mail.formypeople.by 1 1
+END_PAGEREFS
+
+# Search keyphrases - Number of search
+# The 10 first number of search must be first (order not required for others)
+BEGIN_SEARCHWORDS 0
+END_SEARCHWORDS
+
+# Search keywords - Number of search
+# The 25 first number of search must be first (order not required for others)
+BEGIN_KEYWORDS 0
+END_KEYWORDS
+
+# Errors - Hits - Bandwidth
+BEGIN_ERRORS 3
+404 132 130968
+301 1 237
+403 6 3282
+END_ERRORS
+
+# URL with 404 errors - Hits - Last URL referrer
+BEGIN_SIDER_404 42
+/assets/modules/plugins/ckfinder/core/connector/php/connector.php 1 -
+/2020/ 3 -
+/accesories/ 2 https://formypeople.by/cart/
+/ckeditor/ckfinder/core/connector/php/connector.php 1 -
+/user_data/editor/ckfinder/core/connector/php/connector.php 1 -
+/wp2/ 3 -
+/main/ 3 -
+/old/ 3 -
+/js/fckeditor/editor/filemanager/connectors/test.html 1 -
+/web/ 3 -
+/v1/ 3 -
+/robots.txt 36 -
+/fckeditor/editor/filemanager/connectors/test.html 1 -
+/v2/ 3 -
+/assets/admin/ckfinder/core/connector/php/connector.php 1 -
+/backup/ 3 -
+/recovery/ 2 -
+/wp1/ 3 -
+/wordpress/ 3 -
+/assets/developers/js/ckfinder/core/connector/php/connector.php 1 -
+/cms/ 3 -
+/bk/ 3 -
+/blog/ 3 -
+/bak/ 3 -
+/dev/ 3 -
+/public/admin/js/plugins/ckfinder/core/connector/php/connector.php 1 -
+/2018/ 3 -
+/2019/ 3 -
+/install/ 3 -
+/assets/ckfinder/core/connector/php/connector.php 2 -
+/temp/ 3 -
+/resources/ckfinder/core/connector/php/connector.php 1 -
+/wp/ 3 -
+/umbraco 1 -
+/test/ 3 -
+/demo/ 3 -
+/tmp/ 3 -
+/FCKeditor/editor/filemanager/connectors/test.html 1 -
+/cabinet/ 3 https://formypeople.by/cart/
+/site/ 3 -
+/assets/libs/ckfinder/core/connector/php/connector.php 1 -
+/new/ 3 -
+END_SIDER_404
+
+# Host - Pages - Hits - Bandwidth - Last visit date - [Start date of last visit] - [Last page of last visit]
+# [Start date of last visit] and [Last page of last visit] are saved only if session is not finished
+# The 25 first Hits must be first (order not required for others)
+BEGIN_VISITOR 120
+86.57.141.222 13 28 934545 20210702213652
+34.71.20.225 12 12 58916 20210707200114
+46.216.152.91 11 25 879865 20210707181200
+104.199.146.31 9 9 47943 20210718194952
+46.45.185.172 8 8 31997 20210711204340
+34.132.218.239 6 6 29457 20210720185851
+46.45.185.177 5 5 19972 20210711204344
+100.21.218.158 5 26 1263327 20210728222917
+173.236.176.141 5 5 26634 20210720191126
+190.229.236.133 5 5 26632 20210728222933
+139.99.45.136 4 4 21305 20210701231707
+159.89.163.238 4 4 21306 20210705203509
+192.163.199.39 4 4 21309 20210729083912
+142.93.131.65 4 4 21307 20210714193609
+208.113.170.116 4 4 21309 20210722102108
+163.172.141.157 4 4 21309 20210722024846
+64.227.12.160 4 4 21308 20210721210840
+80.82.113.57 4 4 21307 20210706021539
+178.128.180.162 4 4 21305 20210707192346
+122.116.248.74 4 4 21309 20210714030456
+206.189.45.85 4 4 21311 20210714193509
+51.79.160.231 4 4 21306 20210705191906
+159.89.2.220 4 4 21305 20210702063811
+114.33.19.90 4 4 21307 20210701212313
+69.4.89.106 3 3 71722 20210731002317
+64.90.48.197 1 1 5327 20210715071010
+77.111.247.10 1 1 1179 20210720185627
+173.208.244.93 1 1 5328 20210703235956
+66.220.149.2 1 3 48609 20210703132859
+46.45.185.163 1 1 4606 20210711204344
+104.236.44.95 2 2 6499 20210702213352
+138.68.90.192 2 2 10655 20210705091334
+46.45.185.165 1 1 3833 20210711204327
+65.154.226.165 2 12 626303 20210731034919
+65.2.138.93 1 1 5328 20210726172002
+181.214.180.219 2 12 626303 20210704151503
+45.129.18.146 1 1 0 20210701163014
+159.203.101.143 1 1 5328 20210724142238
+45.129.18.120 1 1 0 20210728224823
+31.13.115.4 0 1 223733 
+68.183.149.234 1 1 23908 20210702055622
+34.135.170.190 1 1 5328 20210701230120
+198.204.240.246 2 2 10656 20210701230916
+45.129.18.68 1 1 0 20210721022717
+107.150.52.198 2 2 10654 20210709145000
+66.23.252.226 1 1 5327 20210726165030
+45.129.18.89 1 1 0 20210712180307
+144.86.173.145 1 1 23908 20210720100407
+69.4.87.74 3 3 71723 20210731002059
+54.221.27.173 1 1 5327 20210731125233
+172.245.211.58 1 1 5327 20210726162046
+54.163.165.61 1 1 5327 20210725093637
+92.118.160.1 1 1 23908 20210719182410
+31.13.115.22 0 1 62219 
+167.99.233.123 1 1 23908 20210702213343
+173.236.224.141 1 1 5327 20210715085354
+104.197.165.66 1 1 5328 20210707164332
+165.22.35.21 1 1 5327 20210729214556
+178.128.193.134 1 1 5327 20210703205408
+34.96.130.18 1 1 23908 20210713110640
+66.220.149.52 0 2 144832 
+190.105.144.144 1 1 5327 20210729202628
+31.13.115.10 0 1 97918 
+54.189.230.128 1 2 10720 20210713145354
+92.118.160.37 1 1 23908 20210710002116
+175.184.167.230 1 1 23906 20210729071849
+173.249.63.118 1 1 5326 20210722213658
+66.220.149.117 0 1 62219 
+185.151.125.197 1 1 23908 20210705160723
+195.249.210.185 1 1 5328 20210724145953
+35.221.181.187 1 1 5327 20210729195101
+46.45.185.171 1 5 113870 20210711204310
+34.96.130.3 1 1 23907 20210716084606
+66.220.149.4 1 2 68632 20210703132902
+148.72.211.177 1 1 5325 20210712194517
+92.118.160.9 1 1 23908 20210709220154
+46.45.185.179 0 5 365638 
+107.180.105.101 1 1 5327 20210712185431
+46.45.185.188 2 2 7290 20210711204337
+15.223.77.244 1 1 0 20210708160711
+213.136.76.66 1 1 5328 20210725224745
+46.45.185.161 1 1 3691 20210711204339
+51.83.42.161 2 2 10655 20210722222119
+64.111.126.81 1 1 5328 20210726182450
+173.252.127.24 0 1 97918 
+34.96.130.24 1 1 23908 20210709162628
+173.249.22.173 1 3 43922 20210715121904
+46.45.185.187 1 1 4579 20210711204345
+173.252.127.16 0 1 97918 
+162.55.50.49 1 1 5326 20210727022700
+35.244.92.208 1 1 5327 20210703174557
+206.72.193.170 1 1 5328 20210703184842
+165.227.101.26 1 1 23908 20210708094903
+149.202.8.66 1 1 5328 20210719060828
+208.110.85.68 2 2 10656 20210723144608
+46.101.213.183 1 1 5327 20210712213834
+91.238.165.145 1 1 5328 20210731093201
+13.48.47.71 1 1 5328 20210714033940
+54.203.73.198 1 2 10721 20210708112534
+142.54.177.2 1 1 5328 20210713011152
+46.45.185.190 0 1 140380 
+181.215.121.238 2 12 626302 20210704152803
+54.188.119.1 1 1 5328 20210726002737
+86.165.140.36 1 1 23908 20210731144446
+93.119.227.19 3 3 71724 20210731002453
+66.220.149.35 0 2 229126 
+161.35.138.158 1 1 23908 20210702100913
+107.150.46.53 1 1 5328 20210708171552
+93.119.227.91 3 3 71724 20210731001536
+46.45.185.178 1 1 6413 20210711204311
+46.45.185.180 1 1 2823 20210711204328
+167.71.249.215 1 1 23908 20210708103532
+167.99.120.2 1 1 5328 20210722033055
+157.245.124.144 1 1 23908 20210708095839
+51.132.4.32 1 1 5327 20210724165820
+35.225.94.95 1 1 5328 20210712004057
+66.220.149.10 0 2 37186 
+31.13.127.118 0 1 223733 
+92.118.160.61 1 1 23908 20210718145431
+66.220.149.37 0 3 108704 
+END_VISITOR
+
+# Date - Pages - Hits - Bandwidth - Visits
+BEGIN_DAY 29
+20210701 13 13 63923 6
+20210702 27 42 1058203 7
+20210703 6 25 1524057 6
+20210704 5 25 1257933 3
+20210705 11 11 77175 5
+20210706 6 16 647610 2
+20210707 22 36 935957 5
+20210708 10 11 109080 7
+20210709 4 4 58470 3
+20210710 1 1 23908 1
+20210711 22 32 705092 10
+20210712 5 5 21307 5
+20210713 3 4 39956 3
+20210714 13 13 69255 4
+20210715 3 5 54576 3
+20210716 1 1 23907 1
+20210718 10 10 71851 2
+20210719 2 2 29236 2
+20210720 9 9 59871 5
+20210721 6 6 26636 3
+20210722 11 11 58599 5
+20210723 2 2 10655 2
+20210724 3 3 15983 3
+20210725 4 14 636958 3
+20210726 5 5 26638 5
+20210727 1 1 5326 1
+20210728 6 7 32026 3
+20210729 8 8 61196 5
+20210731 17 27 947759 8
+END_DAY
+
+# Session range - Number of visits
+BEGIN_SESSION 4
+2mn-5mn 2
+0s-30s 114
+30s-2mn 1
+15mn-30mn 1
+END_SESSION
+
+# URL - Pages - Bandwidth - Entry - Exit
+# The 25 first Pages must be first (order not required for others)
+BEGIN_SIDER 33
+/wp-login.php 101 538021 45 45
+/ 68 874469 58 48
+/fonts/ico.woff 9 57717 2 7
+/cart/ 6 20500 0 0
+/home/ 4 11290 1 1
+/coffee/ctype-1078/ 4 17575 0 0
+/old-site/ 3 15981 0 0
+/coffee/ctype-1079/ 3 13411 0 1
+/old-wp/ 3 15981 0 0
+/coffee/brand-8204/ 3 14428 0 0
+/new-site/ 3 15981 0 3
+// 3 15984 2 2
+//wp-content/plugins/fancy-product-designer/inc/custom-image-handler.php 3 15982 2 2
+/tea/ 3 12542 0 2
+/coffee/brand-8202/ 2 9500 0 0
+/admin/fckeditor/editor/filemanager/connectors/test.html 1 1179 1 1
+/product/galarastvor_efiopiya_sidamo__gudji_uraga_8212/ 1 4579 1 1
+/admin/ 1 1172 0 1
+/product/kofe_salvador_burbon_keniya_pomol__melkij_8211/ 1 4691 0 0
+/coffee/ 1 5383 0 0
+/_core/axiom_req.php 1 677 0 0
+/payment/ 1 3833 1 1
+/office/ 1 2828 1 0
+/coffee/ctype-1076/ 1 4606 1 1
+/tea/type-1091/ 1 3627 0 0
+/tea/type-1090/ 1 3691 1 1
+/return/ 1 4679 0 0
+/coffee/ctype-1077/ 1 4375 0 0
+/articles/ 1 2820 1 0
+/tea/type-1092/ 1 3731 0 1
+/product/kofe_salvador_burbon_keniya_8211/ 1 4690 0 0
+/busines/ 1 2831 0 0
+/delivery/ 1 3534 1 0
+END_SIDER

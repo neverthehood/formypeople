@@ -1,0 +1,1084 @@
+<?php
+class client{
+
+
+    static function comArticleDelete(){
+        global $item;
+        $user=mysql::getValue("SELECT user FROM `data_userart` WHERE id=".escape($item)." LIMIT 1");
+        if($user!=false){
+            if($_SESSION['client']['id']==$user){
+                ajax::domRemove("art".$item);
+                mysql::query("DELETE FROM `entity` WHERE id=".escape($item)." LIMIT 1");
+                ajax::sound("click");
+            }
+        }
+        return false;
+    }
+
+    static function comArtSave(){
+        global $settings;
+        $array=$_POST['array'];
+        mysql::startTransaction();
+        if($array['id']==0){
+            mysql::query("INSERT INTO `entity` SET 
+            `parent_id`=1097, 
+            `name`='".escape(trim(strip_tags($array['header'])))."', 
+            `entity_type`=36,
+            `hidden`='1',
+            `date_add`='".date("Y-m-d H:i:s",time())."',
+            `owner`=22");
+            $id=mysql::insertId();
+            mysql::query("INSERT INTO `data_userart` SET 
+            `id`=".escape($id).",
+            `user`=".escape($_SESSION['client']['id']).",
+            `keywords`='".escape(trim(strip_tags($array['keywords'])))."',
+            `description`='".escape(trim(strip_tags($array['description'])))."',
+            `title`='".escape(trim(strip_tags($array['title'])))."',
+            `header`='".escape(trim(strip_tags($array['header'])))."'");
+
+            mysql::query("INSERT INTO `text_userart` SET 
+            `id`=".escape($id).",
+            `kontent`='".escape(trim(clearVis($array['kontent'])))."',
+            `anounce`='".escape(trim(strip_tags($array['anounce'])))."'");
+        }
+        else {
+            mysql::query("UPDATE `entity` SET 
+            `name`='".escape(trim(strip_tags($array['header'])))."'  
+            WHERE `id`=".$array['id']." LIMIT 1");
+
+            mysql::query("UPDATE `data_userart` SET 
+            `keywords`='".escape(trim(strip_tags($array['keywords'])))."',
+            `description`='".escape(trim(strip_tags($array['description'])))."',
+            `title`='".escape(trim(strip_tags($array['title'])))."',
+            `header`='".escape(trim(strip_tags($array['header'])))."' 
+            WHERE `id`=".$array['id']." LIMIT 1");
+
+            mysql::query("UPDATE `text_userart` SET 
+            `kontent`='".escape(trim(clearVis($array['kontent'])))."',
+            `anounce`='".escape(trim(strip_tags($array['anounce'])))."'
+            WHERE `id`=".$array['id']." LIMIT 1");
+        }
+        mysql::stopTransaction();
+        ajax::redirect($settings['protocol'].$settings['siteUrl'].'/cabinet/community/joke-'.rand(0,10000).'/');
+        return false;
+    }
+
+    static function comArticleEdit(){
+        global $item,$settings;
+        $out='';
+
+        $array=mysql::getArray("SELECT * FROM `data_userart` AS t1, `entity` AS t2, `text_userart` AS t3 
+          WHERE t1.id=".escape($item)." AND t1.user=".$_SESSION['client']['id']." AND t2.id=t1.id AND t3.id=t1.id 
+          LIMIT 1", true);
+        if($array===false){
+            $array=array(
+                'id'=>0,
+                'user'=>$_SESSION['client']['id'],
+                'header'=>'',
+                'anounce'=>'',
+                'title'=>'',
+                'keywords'=>'',
+                'description'=>'',
+                'kontent'=>''
+            );
+        }
+
+        $out.='<p><a href="'.$settings['protocol'].$settings['siteUrl'].'/cabinet/community/">&laquo;Назад</a></p>
+            <form method="POST" id="artForm">
+            <input type="hidden" name="array[id]" value="'.$array['id'].'">
+            <input type="hidden" name="array[user]" value="'.$array['user'].'">
+           
+            <label>Заголовок &lt;H1&gt;</label>
+            <input id="comPgHeader" type="text" style="width:100%;" name="array[header]" value="'.$array['header'].'" maxlength="200">
+            
+            <label>Анонс статьи</label>
+            <textarea id="artAn" style="width:100%; height:100px;" name="array[anounce]">'.$array['anounce'].'</textarea>
+            
+            <label>TITLE</label>
+            <input type="text" style="width:100%;" name="array[title]" value="'.$array['title'].'" maxlength="200">
+            
+            <label>Meta KEYWORDS</label>
+            <textarea style="width:100%;height:60px;" name="array[keywords]">'.$array['keywords'].'</textarea>
+            
+            <label>Meta DESCRIPTION</label>
+            <textarea style="width:100%;height:60px;" name="array[description]">'.$array['description'].'</textarea>
+            
+            <textarea id="ck_area" style="display:none;" name="array[kontent]">'.$array['kontent'].'</textarea>
+            <div id="editor" style="width:100%; height:400px; margin-bottom:20px;">'.$array['kontent'].'</div>
+            <div class="row">
+                <br>
+                <div class="button button-primary" onClick="comunityArtSave()"><i class="ic-save"></i>СОХРАНИТЬ</div>
+                <a class="button" href="'.$settings['protocol'].$settings['siteUrl'].'/cabinet/community/"><i class="ic-reply"></i>Выход</a>
+            </div>
+        </form>';
+        ajax::javascript('CKEDITOR.replace(\'editor\');');
+        return array(
+            'community'=>$out
+        );
+        return false;
+    }
+
+    static function comPageSave(){
+        $array=$_POST['array'];
+        mysql::query("UPDATE `data_userpage` SET 
+            keywords='".escape(strip_tags($array['keywords']))."', 
+            description='".escape(strip_tags($array['description']))."', 
+            title='".escape(strip_tags($array['title']))."', 
+            header='".escape(strip_tags($array['header']))."' 
+            WHERE id=".escape($array['id'])." LIMIT 1");
+        mysql::query("UPDATE `text_userpage` SET kontent='".clearVis($array['kontent'])."' WHERE id=".escape($array['id'])." LIMIT 1");
+        ajax::dialogAlert('Сохранено!');
+        return false;
+    }
+
+    static function comEdit(){
+        global $item,$settings;
+        $array=mysql::getArray("SELECT * FROM `data_userpage` AS t1, `entity` AS t2, `text_userpage` AS t3 
+          WHERE t1.id=".escape($item)." AND t1.user=".$_SESSION['client']['id']." AND t2.id=t1.id AND t3.id=t1.id 
+          LIMIT 1", true);
+        if($array!=false){
+            $out.='<p><a href="'.$settings['protocol'].$settings['siteUrl'].'/cabinet/community/">&laquo;Назад</a></p>
+            <form method="POST" id="pageForm">
+            <input type="hidden" name="array[id]" value="'.$array['id'].'">
+            <input type="hidden" name="array[user]" value="'.$array['user'].'">
+           
+            <label>Заголовок H1</label>
+            <input id="comPgHeader" type="text" style="width:100%;" name="array[header]" value="'.$array['header'].'" maxlength="200">
+            
+            <label>TITLE</label>
+            <input type="text" style="width:100%;" name="array[title]" value="'.$array['title'].'" maxlength="200">
+            
+            <label>Meta KEYWORDS</label>
+            <textarea style="width:100%;height:60px;" name="array[keywords]">'.$array['keywords'].'</textarea>
+            
+            <label>Meta DESCRIPTION</label>
+            <textarea style="width:100%;height:60px;" name="array[description]">'.$array['description'].'</textarea>
+            
+            <textarea id="ck_area" style="display:none;" name="array[kontent]">'.$array['kontent'].'</textarea>
+            <div id="editor" style="width:100%; height:400px; margin-bottom:20px;">'.$array['kontent'].'</div>
+            <div class="row">
+                <br>
+                <div class="button button-primary" onClick="comunityPageSave()"><i class="ic-save"></i>СОХРАНИТЬ</div> 
+                <a class="button" href="'.$settings['protocol'].$settings['siteUrl'].'/cabinet/community/"><i class="ic-reply"></i>Выход</a>
+            </div>
+            </form>';
+            ajax::javascript('CKEDITOR.replace(\'editor\');');
+            return array(
+                'community'=>$out
+            );
+
+        }
+        return false;
+    }
+
+    static function communityCreate(){
+        mysql::startTransaction();
+        mysql::query("INSERT INTO `entity` SET name='index', 
+        parent_id=1075, entity_type=34, hidden='0', date_add='".date("Y-m-d H:i:s",time())."', 
+        owner=22, price=0, city_id=0");
+        $id=mysql::insertId();
+        mysql::query("INSERT INTO `data_userpage` SET id=".$id.", user=".$_SESSION['client']['id'].", keywords='', `description`='', title='', header=''");
+        mysql::query("INSERT INTO `text_userpage` SET id=".$id.", kontent=''");
+
+        mysql::stopTransaction();
+        return array(
+            'community'=>self::getCommunityPages($_SESSION['client']['id'])
+        );
+    }
+
+    // Получение страниц юзера в странице "Сообщество"
+    static function getCommunityPages($clientId){
+        global $settings;
+        $array=mysql::getArray("SELECT * FROM `data_userpage` AS t1, `entity` AS t2 
+        WHERE t1.user=".escape($clientId)." AND t2.id=t1.id ORDER BY t2.id ASC");
+        $out='';
+        $pgs=array(
+            'index'=>'Моя учебная страница',
+            'articles'=>'Мои статьи'
+        );
+
+        
+        if($array!=false){
+            $out.='<p><b style="color:#cc0000;">Внимание!</b> Наш сайт не является социальной сетью или собранием блогов. Ваша страница и набор статей используются только во время прохождения вами учебного курса и служат исключительно для выполнения практических задач, которые даются преподавателями. Не забудьте, что ваша страница и список статей отобразится на сайте только после предварительной проверки модератором. Модератор имеет право редактировать содержимое вашей страницы по собственному усмотрению и без каких либо уведомлений.</p>
+            <p>Адрес вашей страницы на сайте <a href="'.$settings['protocol'].$settings['siteUrl'].'/community/'.$array[0]['id'].'/">'.$settings['protocol'].$settings['siteUrl'].'/community/'.$array[0]['id'].'/</a></p>
+            <table style="width:100%;" cellpadding="0" cellspacing="0">';
+            foreach($array AS $val){
+                $act='';
+                if($_SESSION['client']['id']==$val['user']) {
+                    $act=' onClick="ajaxGet(\'client::comEdit?='.$val['id'].'\')"';
+                }
+                $out.='<tr><td style="width:30px;"><i class="ic-description"></i></td><td><a '.$act.' style="font-size:18px;" href="'.$settings['protocol'].$settings['siteUrl'].'/community/'.$val['id'].'/">'.$pgs[$val['name']].'</a></td><td style="width:40px;"><div class="button button-small"'.$act.' style="padding-right:0;"><i class="ic-mode_edit"></i></div></td></tr>';
+            }
+            $out.='<tr style="background:#eeeeee;"><td></td><td>&nbsp;&nbsp;<b style="font-size:18px;">Мои статьи </b> <div class="button button-small" style="margin-left:30px;" onClick="ajaxGet(\'client::comArticleEdit?=0\')"><i class="ic-add"></i>Новая статья</div></b><td>&nbsp;</td></tr>';
+
+            $artlist=mysql::getArray("SELECT t1.id, t2.name, t1.anounce, t4.id AS userid, t4.name AS username FROM `text_userart` AS t1, `entity` AS t2, `data_userart` AS t3, `entity` AS t4  
+            WHERE t3.user=".$clientId." 
+            AND t2.id=t1.id
+            AND t3.id=t2.id 
+            AND t4.id=t3.user  
+            ORDER BY t2.id DESC");
+
+            if($artlist!=false){
+                foreach($artlist AS $val){
+                    $act='';
+                    if($_SESSION['client']['id']==$val['userid']){
+                        $act.='<div class="button button-small" onClick="ajaxGet(\'client::comArticleEdit?='.$val['id'].'\')" style="padding-right:0;"><i class="ic-mode_edit"></i></div><div class="button button-small" onClick="dialogConfirm(\'Вы действительно хотите удалить статью?\',\'ajaxGet(\\\'client::comArticleDelete?='.$val['id'].'\\\')\')" style="padding-right:0;" title="Удалить"><i class="ic-trash_forever" style="color:#dd0000"></i></div>';
+                    }
+                    $out.='<tr id="art'.$val['id'].'"><td><i class="ic-description"></i></td><td><a style="text-decoration:none;" href="'.$settings['protocol'].$settings['siteUrl'].'/community/'.$clientId.'/'.$val['id'].'/"><b style="font-size:14px; color:#000000; line-height:20px; display:block;">'.$val['name'].'</b><span style="display:block;font-size:14px; line-height:16px !important;">'.$val['anounce'].'</span></a></td><td>'.$act.'</td></tr>';
+                }
+            }
+
+
+
+            $out.='</table>';
+            return '<div style="padding:16px; background:#f6f6f6;">'.$out.'</div>';
+        }
+        return '';
+    }
+
+    // Сохранение домашнего задания
+    static function dzSave(){
+        global $settings;
+        if(isset($_SESSION['client']) && $_SESSION['client']['status']==83){
+            mysql::query("UPDATE `text_domzad` SET description='".escape(trim($_POST['rateComment']))."' WHERE id=".escape($_POST['rateItem'])." LIMIT 1");
+            $oldLink='';
+            if($_POST['old']!=''){
+                $oldLink='old-1/';
+            }
+            ajax::redirect($settings['protocol'].$settings['siteUrl'].'/prepod/homeworks/'.$oldLink);
+        }
+        return false;
+    }
+
+    static function setDzRating(){
+        global $item, $rate;
+        if($_SESSION['client']['status']==83){
+            mysql::query("UPDATE `data_domzad` SET `rating`=".escape($rate)." WHERE id=".escape($item)." LIMIT 1");
+        }
+        ajax::sound("click");
+        return false;
+    }
+
+    static function urokHidden(){
+        global $item,$value;
+        mysql::query("UPDATE `entity` SET hidden='".escape($value)."' WHERE id=".escape($item)." LIMIT 1");
+        if($value==1) {
+            $value=0;
+            $vText='Снять отметку о проверке';
+        }
+        else {
+            $value=1;
+            $vText='Отметить как "Проверено"';
+        }
+        return array('uStatButton'=>'<div class="button button-primary" onClick="ajaxGet(\'client::urokHidden?='.$item.'&value='.$value.'\')">'.$vText.'</div>');
+    }
+
+    // Сохранение данных анкеты
+    static function anketaFormSave(){
+        $array=$_POST['array'];
+        $error=array();
+        $control=array(
+            'name'=>'Ф.И.О.',
+            'age'=>'Возраст',
+            'sex'=>'Пол',
+            'city'=>'Город',
+            'email'=>'E-mail',
+            'level'=>'Уровень владения Интернетом'
+        );
+
+        foreach($array AS $key=>$val){
+            if(isset($control[$key])){
+                if($val=='#' || $val==''){
+                    $error[]=$control[$key];
+                }
+            }
+        }
+        if(strlen($array['pochemu'])<36 || strlen($array['podhodite'])<36){
+            $error[]='Ответы на вопросы';
+        }
+        if(!empty($error)){
+            return array(
+                'ankFormResult'=>'<div class="error">Не заполнены следующие поля формы: '.implode(", ",$error).'</div>
+                <div class="button button-primary" onclick="ajaxPost(\'ankForm\',\'client::anketaFormSave\')">Отправить данные</div>'
+            );
+        }
+        else {
+            mysql::startTransaction();
+            mysql::query("INSERT INTO `entity` SET 
+             `parent_id`=944,
+             `name`='".escape($array['name'])."',
+             `entity_type`=33,
+             `hidden`='0',
+             `date_add`='".date("Y-m-d H:i:s")."',
+             `owner`=22,
+             `price`=0,
+             `city_id`=0");
+            $id=mysql::insertId();
+            mysql::query("INSERT INTO `data_anketa` SET 
+             `id`=".$id.",
+             `age`=".escape($array['age']).",
+             `sex`='".escape($array['sex'])."',
+             `city`='".escape($array['city'])."',
+             `tel`=".onlyDigit(trim($array['tel'])).",
+             `email`='".escape($array['email'])."',
+              `level`='".escape($array['level'])."'");
+            mysql::query("INSERT INTO `text_anketa` SET 
+            `id`=".escape($id).",
+            `pochemu`='".escape($array['pochemu'])."',
+            `podhodite`='".escape($array['podhodite'])."'");
+            mysql::stopTransaction();
+            return array(
+                'anketaForm'=>'<div class="info">Спасибо! Ваша анкета принята. Результат вы узнаете после прохождения полного курса обучения.</div>'
+            );
+        }
+        return false;
+    }
+
+    static function showAdminAnketa(){
+        global $settings;
+        $out='';
+
+        $out.='<div class="row" id="anketaForm">
+            <form method="POST" id="ankForm">
+            <div style="background:#e8e8e8; padding:16px 8px;">
+            <label for="fl1">Ф.И.О.</label>
+            <input id="fl1" type="text" style="width:100%" name="array[name]">
+            
+            <div class="row">
+                <div class="four columns">
+                <label for="fl2">Возраст</label>
+                <input id="fl2" type="text" style="width:100%" maxlength="2" name="array[age]" onkeypress="return inputNumber(event)">
+                </div>
+                <div class="four columns">
+                <label for="fl3">Пол</label>
+                <select id="fl3" name="array[sex]" style="width:100%">
+                    <option value="#">-Выберите пол-</option>
+                    <option value="78">Мужской</option>
+                    <option value="79">Женский</option>
+                </select>
+                </div>
+                <div class="four columns">
+                    <label for="fl4">Город</label>
+                    <input id="fl4" type="text" style="width:100%" name="array[city]">
+                </div>
+            </div>
+            <div class="row">
+                <div class="six columns">
+                    <label for="fl5">Телефон</label>
+                    <input id="fl5" type="text" style="width:100%" name="array[tel]" onkeyup="telFormat(this)">
+                </div>
+                <div class="six columns">
+                    <label for="fl6">E-mail</label>
+                    <input id="fl6" type="text" style="width:100%" name="array[email]">
+                </div>
+            </div>
+            <div class="row">
+                <label for="fl7">Уровень пользования интернетом</label>
+                <select id="fl7" name="array[level]" style="width:100%">
+                    <option value="#">-Выберите уровень-</option>
+                    <option value="80">Начальный</option>
+                    <option value="81">Хороший</option>
+                    <option value="82">Продвинутый</option>
+                </select>
+            </div>
+            
+            <label for="fl8">Почему вы хотите стать администратором городской информационной площадки в своем городе?</label>
+            <textarea name="array[pochemu]" id="fl8" style="width:100%; height:120px"></textarea>
+            
+            <label for="fl9">Почему Вы считаете, что подходите на позицию администратора городской информационной площадки?</label>
+            <textarea name="array[podhodite]" id="fl9" style="width:100%; height:120px"></textarea>
+            <div class="row" id="ankFormResult">
+                <div class="button button-primary" onClick="ajaxPost(\'ankForm\',\'client::anketaFormSave\')">Отправить данные</div>
+            </div>
+            </div>
+            </form>
+        </div>';
+
+
+        return array(
+            'forForm'=>$out
+        );
+    }
+
+    static function dzFileUpload(){
+        sleep(1);
+        $out='';
+        $error='';
+
+        if(isset($_POST['dz']) && isset($_FILES['userfile']) && isset($_SESSION['client']['id'])){
+            $dz=$_POST['dz'];
+            $ext=file::getExtension($_FILES['userfile']['name'],'doc,docx,zip,rar,pdf,7z,txt,rtf,xls,xlsx');
+
+            if($_FILES['userfile']['error']!=0) $error.='Ошибка при загрузке файла! ';
+            if($ext==false) $error.='Недопустимый тип файла! ';
+            if($error==''){
+                $dzid=$dz['id'];
+                // Ошибок нет - продолжаем
+                mysql::startTransaction();
+
+                // Проверим, создана ли папка для хранения
+                if($dzid==0){
+                    // Создадим новое ДЗ
+                    mysql::query("INSERT INTO `entity` SET parent_id=901, name='д.з. ".htmlspecialchars($_SESSION['client']['name'])."', entity_type=32, hidden='0', date_add='".escape(date("Y-m-d H:i:s"))."', owner=22, price=0, city_id=0");
+
+                    $dzid=mysql::insertId();
+                    $folder=floor($dzid/100);
+                    if(!file_exists($_SERVER['DOCUMENT_ROOT'].'/uploaded/'.$folder)){
+                        mkdir($_SERVER['DOCUMENT_ROOT'].'/uploaded/'.$folder,0775);
+                    }
+                    mysql::query("INSERT INTO `data_domzad` SET id=".escape($dzid).", user=".escape($dz['client']).", urok=".$dz['lesson']);
+                    mysql::query("INSERT INTO `text_domzad` SET id=".escape($dzid));
+                }
+                $fname='dz'.$dzid.'-'.$_SESSION['client']['id'].'-'.rand(0,65535);
+                if(!copy($_FILES['userfile']['tmp_name'],$_SERVER['DOCUMENT_ROOT'].'/uploaded/'.floor($dzid/100).'/'.$fname.'.'.$ext)){
+                    $error.='Не удалось скопировать файл! ';
+                }
+                if($error==''){
+                    // Получим максимальный ORDER
+                    $order=onlyDigit(mysql::getValue("SELECT MAX(`order`) FROM `file` WHERE entity_id=".escape($dzid)." LIMIT 1"))+1;
+                    mysql::query("INSERT INTO `file` SET attribute_id=189, entity_id=".escape($dzid).", `file`='".escape($fname)."', ext='".escape($ext)."', `type`='other', `filesize`=".$_FILES['userfile']['size'].", `imagesize`='0x0', `name`='".$_FILES['userfile']['name']."', `description`='', `order`=".$order);
+                }
+                mysql::stopTransaction();
+            }
+        }
+        else $error.='Опа! Ошибка!';
+        if($error!='') $out.='<div class="error">'.$error.'</div>';
+        return array(
+            'domRabota'=>$out.self::showDomRabotaForm($dz['lesson'], $dz['client'])
+        );
+    }
+
+    // Отображение домашней работы в кабинете пользователя
+    static function showDomRabotaForm($lesson, $client){
+        $out='';
+
+        // Данные урока
+        $less=mysql::getArray("SELECT * FROM `data_lesson` AS t1, `entity` AS t2  WHERE t1.id=".escape($lesson)." AND t2.id=t1.id LIMIT 1");
+        // Получим все файлы, которые уже загружены к этому уроку
+        $dzid=0;
+        $array=mysql::getArray("SELECT * FROM `data_domzad` AS t1, `entity` AS t2 
+        WHERE t1.urok=".escape($lesson)." AND t1.user=".escape($client)." AND t2.id=t1.id",true);
+        $files='';
+        $fileCount=0;
+        if($array!=false){
+            $dzid=$array['id'];
+            $farr=mysql::getArray("SELECT * FROM `file` WHERE entity_id=".escape($array['id'])." ORDER BY `order` ASC");
+            if($farr!=false){
+                $fileCount=count($farr);
+                $files.='<table style="width:100%; float:none; clear:both; background:#ffffff; border:1px solid #eeeeee; width:100%;">
+                <tr style="background:#cccccc;"><th></th><th>Загруженные файлы</th><th style="width:120px;">Размер</th></tr>';
+                foreach($farr AS $val){
+                    $files.='<tr><td style="width:30px; padding:6px 4px 0 4px;"><i class="ic-description"></i></td><td><b>'.$val['name'].'</b></td><td>'.file::bytes($val['filesize']).'</td></tr>';
+                }
+                $files.='</table>';
+            }
+        }
+        $out='<p style="color:#005599; font-weight:bold; font-size:14px;">Сохраните выполненное домашнее задание в файл формата DOCX или DOC и загрузите его с помощью данной формы. Размер файла не должен превышать 3Mb.</p>'.$files;
+        if($fileCount<5) $out.='<form id="dzform" method="POST" enctype="multipart/form-data">
+                                <input type="hidden" name="dz[id]" value="'.$dzid.'">
+                                <input type="hidden" name="dz[lesson]" value="'.$lesson.'">
+                                <input type="hidden" name="dz[client]" value="'.$client.'">
+                                <input type="file" name="userfile">
+                                <div id="dzButton" class="button" onClick="dzUpload()">Загрузить</div>
+                            </form>';
+        else $out.='<p>Загружено максимально допустимое количество файлов.</p>';
+        return $out;
+    }
+
+    // Отправка вопроса во время трансляции
+    static function lessonQwSend(){
+
+        $lastSendedTime=0;
+        $currentTime=time();
+        if(isset($_SESSION['lastQwestionTime'])) {
+            $lastSendedTime=$_SESSION['lastQwestionTime']+(15*60);
+        }
+        if($currentTime<$lastSendedTime){
+            ajax::dialogAlert("Прежде чем задать еще один вопрос должно пройти не менее 15 минут после отправки предыдущего вопроса.");
+
+            return false;
+        }
+
+        if(isset($_SESSION['client']) && isset($_POST['question'])){
+            if(strlen($_POST['question'])>=2){
+                $_SESSION['lastQwestionTime']=$currentTime;
+                $qwestion=trim($_POST['question']);
+                $qwestion=htmlspecialchars($qwestion);
+                mysql::query("INSERT INTO `qwestion` SET 
+            time='".date("Y-m-d H:i:s")."',
+            name='".escape(trim($_SESSION['client']['name']))."',
+            anounce='".escape(trim(substr($qwestion,0,128)))."',
+            qwestion='".trim(nl2br($qwestion))."',
+            hidden='1'");
+                ajax::sound("sys");
+                //ajax::dialogConfirm("Ваше сообщение отправлено");
+                return array(
+                    'qwFormDiv'=>'<p style="font-size:18px;">Ваше сообщение успешно отправлено!</p>
+                    <div class="button" onClick="ajaxGet(\'client::qwForm\')">Задать вопрос</div>'
+                );
+            }
+            else {
+                ajax::dialogAlert("Слишком короткое сообщение. Будьте конструктивнее!");
+                return false;
+            }
+        }
+
+    }
+
+    // Отображение формы отправки вопроса к уроку
+    static function qwForm(){
+        if(isset($_SESSION['client'])){
+            return array(
+                'qwFormDiv'=>'<form id="lQwestion" method="POST">
+                <div class="row">
+                    <textarea name="question" style="width:100%; height:80px;"></textarea>
+                </div>
+                <div class="row">
+                    <div class="button" onClick="ajaxPost(\'lQwestion\',\'client::lessonQwSend\')">Отправить</div>
+                </div>
+                </form>'
+            );
+        }
+    }
+
+    static function check(){
+        return array('loginWin','rand='.rand(0,10000));
+    }
+
+    // Отображение PHP виджета КАЛЕНДАРЬ
+    //
+    static function showPhpCalendar($month, $year, $val, $value){
+        $out='';
+        $date='01.'.$month.'.'.$year;
+
+        list($Сday,$Сmonth,$Сyear,$Сdays,$СdayOfWeek,$monthNum,$monthTmp)=explode(".",date('j.n.Y.t.N.n.m', strtotime($date)));
+        $monthNames=explode(',',',Январь,Февраль,Март,Апрель,Май,Июнь,Июль,Август,Сентябрь,Октябрь,Ноябрь,Декабрь');
+        $monthTmp='.'.$monthTmp.'.'.$year;
+
+        $dCh=0;
+        $wdc=1;// Счетчик к-ва дней недели
+        $selected='';
+        // Если месяц начинается не с понедельника, то добавляем пустые дни
+        if($СdayOfWeek!=1){
+            for($i=1; $i<$СdayOfWeek; $i++){
+                if($i==1) $out.='<tr>';
+                $out.='<td class="hd"></td>';
+                $wdc++;
+                if($i==8) $out.='</tr>';
+            }
+        }
+
+        // Основной блок календаря - даты месяца
+        for($Cm=1 ; $Cm<=$Сdays; $Cm++){
+            $zdn=$Cm;
+            $class=='';
+            if($Cm<10) $zdm='0'.$Cm;
+            else $zdm=$Cm;
+            if(in_array($zdm.$monthTmp, $value)) {
+                $class='sel';
+                $selected.='<input id="fl'.$val['id'].'-'.$zdm.$monthTmp.'" type="hidden" name="array['.$val['alias'].'][]" value="'.$zdm.$monthTmp.'">';
+            }
+            else $class='';
+            if($wdc==1) $out.='<tr>';
+            $out.='<td class="'.$class.'" id="d'.$val['id'].'-'.$zdm.$monthTmp.'" onClick="calSet(this.id)">'.$Cm.'</td>';
+            $wdc++;
+            if($wdc==8) {
+                $out.='</tr>';
+                $wdc=1;
+            }
+        }
+
+        if($wdc!=1){
+            for($i=$wdc; $i<=7; $i++){
+                if($i==1) $out.='<tr>';
+                $out.='<td class="hd"></td>';
+                $wdc++;
+                if($i==8) $out.='</tr>';
+            }
+        }
+
+        $out='<div class="axCal2"><table><tr class="mheight"><th colspan="7">'.$monthNames[$monthNum].' '.$Сyear.'</th></tr><tr><th>Пн</th><th>Вт</th><th>Ср</th><th>Чт</th><th>Пт</th><th>Сб</th><th>Вс</th></tr>'.$out.'</table></div>'.$selected;
+        return $out;
+    }
+
+    // Регистрация юзера
+    static function register(){
+        $error="";
+        if(isset($_POST['user'])){
+            $user=$_POST['user'];
+            $tel=onlydigit(trim($user['tel']));
+            if(strlen($tel)<12){
+                ajax::sound("alert");
+                return array('regFormError'=>'<div class="error">Недопустимый номер телефона!</div>');
+            }
+            // Узнаем, не зареген ли такой юзер ранее
+            $finded=mysql::getArray("SELECT * FROM `data_user` WHERE mail='".escape($user['mail'])."' || tel=".onlyDigit(trim($user['tel']))." LIMIT 1");
+            if($finded!=false) {
+                ajax::sound("alert");
+                return array('regFormError'=>'<div class="error">Пользователь с таким E-mail или номером телефона уже зарегистрирован! Войдите в свою учетную запись или воспользуйтесь системой восстановления пароля.</div>');
+            }
+            else {
+                mysql::startTransaction();
+                mysql::query("INSERT INTO `entity` SET name='".escape($user['name'])."', parent_id=303, entity_type=28, date_add='".date("Y-m-d H:i:s",time())."', owner=22");
+
+                $id=mysql::insertId();
+                $pass=trim(user::generatePassword(6));
+                mysql::query("INSERT INTO `data_user` SET id=".escape($id).", password='".escape($pass)."', passcode='".escape(md5($pass))."', town=".escape($user['city']).", status=69, tel=".escape(onlyDigit($user['tel'])).", sfera=".escape($user['sphere']).", mail='".escape(trim($user['mail']))."'");
+                mysql::query("INSERT INTO `text_user` SET id=".escape($id));
+                mysql::stopTransaction();
+                $smsText='Ваш пароль на сайте sumom.by : '.$pass;
+                sms::send(trim(onlyDigit($user['tel'])),$smsText,false,false,true);
+                ajax::sound("ring");
+                return array('regFormDiv'=>'<div class="okMessage"><h3>Поздравляем вас!</h3><p>Ваша учетная запись зарегистрирована на сайте sumom.by! </p><p>Данные для авторизации будут отправлены вам в ближайшее время в СМС уведомлении.</p><p>Вы можете изменить пароль и персональные данные. Для этого пройдите авторизацию на сайте и воспользуйтесь пунктом меню "персональные данные".</p></div>');
+            }
+        }
+    }
+
+    static function changeRegionSelect(){
+        global $item;
+        $array=mysql::getArray("SELECT id,name FROM `entity` WHERE ");
+    }
+
+    // Отображение формы регистрации
+    static function registerForm(){
+        global $site, $settings;
+        static $frmCounter;
+        $frmCounter=rand(1,65535);
+
+        $out='';
+        $user=array(
+            'name'=>'',
+            'city'=>0,
+            'sphere'=>13
+        );
+
+        $region=0;
+
+        $cityArray=array(0=>'-Город-');
+        $cityArray+=mysql::getSpecial("SELECT id,name FROM `entity` WHERE parent_id=249 AND hidden='0' ORDER BY name ASC");
+
+        $sphereArray=array(0=>'-Сфера деятельности--');
+        $spa=mysql::getArray("SELECT id,name FROM `entity` WHERE parent_id=304 AND hidden='0' ORDER BY `name` ASC");
+        foreach($spa AS $val){
+            $sphereArray[$val['id']]=$val['name'];
+        }
+
+        $out.='<div id="rgDiv'.$frmCounter.'">
+        <div id="regFormError"></div>
+        <form id="rgFrm'.$frmCounter.'" method="POST">
+            <input type="hidden" name="action" value="register">
+            <input id="fr'.$frmCounter.'-name" class="size-max" name="user[name]" value="" placeholder="Ф.И.О." type="text" />
+            <input id="fr'.$frmCounter.'-mail" class="size-max" name="user[mail]" value="" placeholder="E-mail" type="text" />
+            <input id="fr'.$frmCounter.'-tel" class="size-max" name="user[tel]" value="" placeholder="Моб.телефон +37529 123-45-67" type="text" onkeyup="telFormat(this)" onInput="telFormat(this)" />
+            '.createSelect('user[city]',$region,$cityArray,' id="fr'.$frmCounter.'-city" class="size-max"').'
+            '.createSelect('user[sphere]',$user['sphere'],$sphereArray,' id="fr'.$frmCounter.'-sphere" class="size-max"').'
+            <div class="bbButton" style="width:100%;" onClick="regFormControl('.$frmCounter.')">Регистрация</div>
+        </form>
+      </div>';
+
+        return array('regFormDiv'=>$out);
+    }
+
+    // Удаление аватара
+    static function avatarDelete(){
+        global $settings;
+        if(isset($_SESSION['client']['id'])){
+            // Удалим старый файл, если таковой есть
+            $images=mysql::getList("SELECT id FROM `file` WHERE entity_id=".escape($_SESSION['client']['id'])." AND attribute_id=104");
+            if($images!=false){
+                foreach($images AS $val){
+                    data::fileDelete('catalog',$val);
+                }
+            }
+            $_SESSION['client']['avatar']='';
+            ajax::redirect($settings['protocol'].$settings['siteUrl'].'/cabinet/settings/av-delete'.rand(0,200).'_'.$_SESSION['client']['id'].'/');
+        }
+    }
+
+    // Загрузка нового аватара
+    static function avatarUpload(){
+       global $currentImageWidth;
+       global $currentImageHeight;
+       global $settings;
+       if(isset($_FILES['userfile']) && $_FILES['userfile']['error']==0 && isset($_SESSION['client']['id'])){
+           // Удалим старый файл, если таковой есть
+           $images=mysql::getList("SELECT id FROM `file` WHERE entity_id=".escape($_SESSION['client']['id'])." AND attribute_id=104");
+           if($images!=false){
+               foreach($images AS $val){
+                   data::fileDelete('catalog',$val);
+               }
+           }
+
+           $cat=$_SERVER['DOCUMENT_ROOT'].'/uploaded/'.floor($_SESSION['client']['id']/100).'/';
+           $fname='avatar'.$_SESSION['client']['id'].'-'.time();
+           // Загружаем новый
+           image::makeImage($_FILES['userfile']['tmp_name'],$cat.$fname.'.jpg',400,400,91);
+           $filesize=filesize($cat.$fname.'.jpg');
+           $width=$currentImageWidth;
+		   $height=$currentImageHeight;
+           image::makeImage($_FILES['userfile']['tmp_name'],$cat.$fname.'s.jpg',300,300,91);
+           image::makeSquareIcon($_FILES['userfile']['tmp_name'],$cat.$fname.'sys.jpg',120);
+
+           // Пропишем в БД
+           mysql::query("UPDATE `data_user` SET avatar='".escape($fname.'.jpg')."' WHERE id=".escape($_SESSION['client']['id'])." LIMIT 1");
+
+           mysql::query("INSERT INTO `file` SET attribute_id=104, entity_id=".escape($_SESSION['client']['id']).", file='".escape($fname)."', ext='jpg', `type`='image', filesize=".$filesize.", imagesize='".$width."x".$height."',`order`=1");
+
+           $_SESSION['client']['avatar']=$fname.'.jpg';
+           ajax::redirect($settings['protocol'].$settings['siteUrl'].'/cabinet/settings/up-avatar'.$_SESSION['client_id'].'_'.rand(0,255).'/');
+       }
+    }
+
+    // Форма загрузки аватара
+    static function avatarUploadForm(){
+        global $settings;
+
+        ajax::styleSet("avBtnField","display:none;");
+        ajax::styleSet("adClFrmBtn","display:none;");
+        return array(
+            'clientData'=>'<form id="clientAform" method="POST" enctype="multipart/form-data">
+        <div class="info"><i class="ic-assignment_late"></i>
+            <p>Разрешена загрузка изображений в формате JPEG. Размер файла не должен превышать 300Kb. При загрузке файл будет автоматически преобразован к принятому на сайте формату аватара. Во время такого преобразования из загруженного вами изображения будет автоматически вырезана центральная часть (квадрат), поэтому постарайтесь найти изображение, в котором лицо будет находится в центральной части кадра. </p>
+        </div>
+        <div id="fuploadFields">
+            <div class="row" style="padding:8px 12px 0 12px;">
+                <input type="file" id="avatarField" name="userfile" style="width:100%;" onChange="avatarUploadControl()">
+            </div>
+            <div class="row" style="padding:8px 12px 0 12px;">
+                <div class="button button-primary"><i class="ic-save"></i>Сохранить</div>
+                <a class="button" href="'.$settings['protocol'].$settings['siteUrl'].'/cabinet/settings/"><i class="ic-rotate_left"></i>Отмена</a>
+            </div>
+        </div>
+        </form>');
+    }
+
+    // Если задан $type, то на выходе
+    // строка c картинкой,
+    // иначе - массив со всеми картинками для
+    // всех элементов (для АЯКСА)
+    static function showClientAvatar($type=false){
+        global $settings;
+        if(isset($_SESSION['client']['avatar'])){
+            $avatar=$_SESSION['client']['avatar'];
+            if($avatar==''){
+                return '<p>Загрузите ваше фото, которое будет использоваться в качестве аватара.</p>
+                <i class="ic-account_circle bigClientAvatar"></i>';
+            }
+            else {
+                return '<img class="avatarImage" src="'.$settings['protocol'].$settings['siteUrl'].'/uploaded/'.floor($_SESSION['client']['id']/100).'/'.str_replace('.jpg','sys.jpg',$_SESSION['client']['avatar']).'" alt="'.htmlspecialchars($_SESSION['client']['name']).'">';
+            }
+        }
+        else return false;
+    }
+
+    // Получение данных клиента из БД
+    static function getClientData($id){
+        return mysql::getArray("SELECT 
+            t1.*, t2.*, t3.*, t5.name AS sferaname, t6.name AS townname  
+            FROM 
+            `data_user` AS t1,
+            `entity` AS t2,
+            `text_user` AS t3,
+            `entity` AS t5,
+            `entity` AS t6
+            WHERE t1.id=".escape($id)." 
+                AND t2.id=t1.id
+                AND t3.id=t2.id  
+                AND t5.id=t1.sfera 
+                AND t6.id=t1.town 
+            LIMIT 1",true);
+    }
+
+    // Сохранение пароля
+    static function passwdSave(){
+        ajax::styleSet("adClFrmBtn","display:inline-block;");
+        if($_SESSION['client']['id']==$_POST['user']['id']){
+            $user=$_POST['user'];
+            mysql::query("UPDATE `data_user` SET passcode='".escape(md5(trim($user['pass'])))."' WHERE id=".escape($user['id'])." LIMIT 1");
+            ajax::message('Новый пароль успешно сохранен!');
+            return array(
+                'clientData'=>'<div class="info"><i class="ic-assignment_late"></i><p>Новый пароль успешно сохранен.</p></div>'.self::showClientData(self::getClientData($user['id']))
+            );
+        }
+        ajax::dialogAlert('Истекло время сессии. Пожалуйста, авторизуйтесь на сайте снова.');
+        return false;
+    }
+
+    // Массив областей
+    static function getReglist(){
+        return array(
+            6=>'Минская',
+            7=>'Брестская',
+            8=>'Витебская',
+            9=>'Гомельская',
+            10=>'Гродненская',
+            11=>'Могилевская'
+        );
+    }
+
+    // Обновление селекта с городами по региону
+    static function townByRegion(){
+        sleep(1);
+        ajax::message('Выберите ближайший к вам город');
+        $out='<option value="#">--НЕ ЗАДАН--</option>';
+        if(isset($_POST['user']['region'])){
+            $array=mysql::getArray("SELECT t2.id, t2.name  
+            FROM `data_town` AS t1, 
+            `entity` AS t2 
+            WHERE t1.region=".escape($_POST['user']['region'])." 
+            AND t2.id=t1.id 
+            ORDER BY t2.name ASC");
+            if($array!=false){
+                foreach($array AS $val){
+                    $out.='<option value="'.$val['id'].'">'.$val['name'].'</option>';
+                }
+            }
+        }
+        return array('uTown'=>$out);
+    }
+
+    static function clientPassForm(){
+        $out='';
+        global $settings;
+        $out.='<div colspan="2"><div class="info"><i class="ic-assignment_late"></i><p>Совет: Не устанавливайте слишком простой пароль. Зачастую мы думаем, что наши пароли никому не нужны, и осознаем всю полноту этого заблуждения лишь после того, как наш аккаунт где-либо оказывается взломан. Не повторяйте чужих ошибок.</p> <p><b>Как создать безопасный пароль?</b><br>Все достаточно просто: Безопасный пароль должен быть достаточно длинным, (не менее 8 символов), должен содержать как цифры, так и символы в верхнем и нижнем регистре, а если вы хотите повысить сложность пароля - включит в его состав также специальные символы (!@$#^&*()_ и т.д.). </p></div><br>
+                <label>&nbsp;&nbsp;Новый пароль</label>
+                <form id="userPssFrm" method="POST">
+                <input type="hidden" name="user[id]" value="'.$_SESSION['client']['id'].'">
+                <table class="nbTable">
+                <tr>
+                    <td><input id="newPwd" type="text" name="user[pass]" style="font-family: monospace; font-size:20px; font-weight:bold; float:left; width:200px; margin-right:6px; " onChange="passSecureCheck()" onKeyUp="passSecureCheck()" onKeyDown="passSecureCheck()" autocomplete="off">
+                    <span class="button" style="float:left;" title="Сгенерировать безопасный пароль" onClick="genPass()"><i class="ic-casino"></i>Сгенерировать</span>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span id="passSecure" style="width:100%; float:none; clear:both; background:#eeeeee;">
+                            &nbsp;
+                        </span>
+                    </td>
+                </tr>
+                <tr style="">
+                    <td colspan="2">
+                    <span class="button button-primary" style="float:left" title="Сохранить" onClick="clientPwdSave()"><i class="ic-save" ></i>Сохранить</span>
+                    <a class="button" style="float:right;" href="'.$settings['protocol'].$settings['siteUrl'].'/cabinet/settings/"><i class="ic-rotate_left"></i>Отмена</a>
+                    </td>
+                </tr>
+                </table>
+        </div>';
+        ajax::styleSet('adClFrmBtn','display:none;');
+
+        return array(
+            'clientPassField'=>$out
+        );
+    }
+
+    // Отображение личных данных пользователя
+    static function showClientData($array){
+		$sms=array(0=>'НЕТ', 1=>'ДА');
+        if(!isset($array['regname'])){
+            $regList=client::getReglist();
+        }
+        if(!isset($array['townname'])){
+            $array['townname']=mysql::getValue("SELECT name FROM `entity` WHERE id=".escape($array['town'])." LIMIT 1");
+        }
+        if(!isset($array['sferaname'])){
+            $array['sferaname']=mysql::getValue("SELECT name FROM `entity` WHERE id=".escape($array['sfera'])." LIMIT 1");
+        }
+        return '<div class="clRow"><div>Имя: </div><div><b>'.$array['name'].'</b></div></div>
+                        <div class="clRow"><div>Мобильный телефон: </div><div><b>'.phone_format($array['tel']).'</b></div></div>
+                        <div class="clRow"><div>E-mail: </div><div><b>'.$array['mail'].'</b></div></div>
+                        <div class="clRow"><div>Город: </div><div><b>'.$array['townname'].'</b></div></div>
+                        <div class="clRow"><div>Сфера деятельности: </div><div><b>'.$array['sferaname'].'</b></div></div>
+						<div class="clRow"><div>Получать СМС рассылки: </div><div><b>'.$sms[$array['sms']].'</b></div></div>
+                        <div class="clRow" id="clientPassField"><div>Пароль: </div><div><span class="button button-small" onClick="ajaxGet(\'client::clientPassForm\')"><i class="ic-security"></i>Изменить пароль</span></div></div>';
+    }
+
+    // Сохранение основной формы личных данных
+    static function clientDataSave(){
+        if($_SESSION['client']['id']==$_POST['user']['id']){
+            $user=$_POST['user'];
+            mysql::query("UPDATE `entity` SET name='".escape(trim($user['name']))."' WHERE id=".escape($user['id'])." LIMIT 1");
+            $dopFields=array();
+            $dopFields[]="town=".escape($user['town']);
+            if(isset($user['region'])){
+                $dopFields[]="`region`=".escape($user['region']);
+            }
+            mysql::query("UPDATE `data_user` SET ".implode(",",$dopFields).", tel='".escape(trim(onlyDigit($user['tel'])))."', mail='".escape(trim($user['mail']))."', sms='".escape($user['sms'])."' WHERE id=".escape($user['id'])." LIMIT 1");
+            ajax::message("Данные успешно сохранены!");
+            ajax::styleSet("adClFrmBtn","display:inline-block;");
+            return array('clientData'=>client::showClientData($user));
+        }
+    }
+
+    // Форма редактирования личных данных
+    static function clientDataForm(){
+        global $settings;
+        $out='';
+		$sms=array(0=>'НЕТ', 1=>'ДА');
+		
+        ajax::styleSet('adClFrmBtn','display:none;');
+        if(isset($_SESSION['client']['id'])){
+
+            $array=mysql::getArray("SELECT * FROM 
+            `data_user` AS t1,
+            `entity` AS t2 
+            WHERE 
+                t1.id=".escape($_SESSION['client']['id'])." 
+                AND t2.id=t1.id 
+            LIMIT 1",true);
+
+            $townList=array('#'=>'--НЕ ЗАДАН--');
+            $townList+=mysql::getSpecial("SELECT id, name  
+            FROM `entity` WHERE entity_type=27 
+            ORDER BY name ASC");
+			$smsList=array(0=>'НЕТ',1=>'ДА');
+
+            //echo '<pre>';
+            //print_r($array);
+            //echo '</pre>';
+
+            $out.='<form method="POST" id="userDataForm">
+            <input type="hidden" name="user[id]" value="'.$array['id'].'">
+            <input type="hidden" name="user[sfera]" value="'.$array['sfera'].'">
+            <table>
+                <tr>
+                    <td><label>Имя</label></td>
+                    <td><input type="text" name="user[name]" id="uName" value="'.$array['name'].'"></td>
+                </tr>
+                <tr>
+                    <td><label>Мобильный телефон</label></td>
+                    <td><input type="text" name="user[tel]" id="uTel" value="'.$array['tel'].'" onKeyUp="telFormat(this)" onInput="telFormat(this)"></td>
+                </tr>
+                <tr>
+                    <td><label>E-mail</label></td>
+                    <td><input type="text" name="user[mail]" id="uMail" value="'.$array['mail'].'"></td>
+                </tr>
+                <tr>
+                    <td><label>Город</label></td>
+                    <td>'.createSelect('user[town]',$array['town'],$townList,' style="width:100%" id="uTown" ').'</td>
+                </tr>
+				<tr>
+                    <td><label>Получать СМС рассылки</label></td>
+                    <td>'.createSelect('user[sms]',$array['sms'],$smsList,' style="width:100%" id="uSms" ').'</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span class="button button-primary" onClick="userDataControl()"><i class="ic-save"></i>Сохранить</span>
+                        <a class="button" href="'.$settings['protocol'].$settings['siteUrl'].'/cabinet/settings/"><i class="ic-rotate_left"></i>Отмена</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        ';
+
+            return array(
+                'clientData'=>$out
+            );
+        }
+
+        else{
+            ajax::dialogAlert("Вероятно истекло время сессии. Пожалуйста, авторизуйтесь заново!");
+        }
+    }
+
+    // Дисконнект
+    static function disconnect(){
+        global $settings;
+        $_SESSION=array('client'=>false);
+        session_destroy();
+        ajax::redirect($settings['protocol'].$settings['siteUrl'].'/');
+        return false;
+    }
+
+    // Авторизация
+    static function authorize(){
+        global $settings;
+        $out='';
+
+        if(isset($_POST['user']['mail']) && isset($_POST['user']['password'])){
+            $array=mysql::getArray("SELECT 
+                t1.town, 
+                t1.avatar, 
+                t1.status, 
+                t1.tel, 
+                t1.sfera, 
+                t1.mail, 
+                t2.*
+            FROM 
+                `data_user` AS t1, `entity` AS t2, `options` AS t3 
+            WHERE 
+                t1.passcode='".escape(md5(trim($_POST['user']['password'])))."' AND t1.mail='".escape(trim($_POST['user']['mail']))."' AND t2.id=t1.id 
+                LIMIT 1",true);
+            if($array==false){
+                $out.='<div class="error">Пользователь не найден!</div>';
+                ajax::consoleError('Пользователь не найден!');
+                include_once($_SERVER['DOCUMENT_ROOT'].'/_modules/loginForm.php');
+                $out.=loginForm();
+            }
+            else {
+				$array['date_active']=date('Y-m-d H:i:s',time());
+				mysql::query("UPDATE `data_user` SET `date_active`='".escape($array['date_active'])."' WHERE id=".escape($array['id'])." LIMIT 1");
+                $_SESSION['client']=$array;
+                if($array['status']==69){
+                    ajax::redirect($settings['protocol'].$settings['siteUrl'].'/cabinet/');
+                }
+                elseif($array['status']==83){
+                    ajax::redirect($settings['protocol'].$settings['siteUrl'].'/prepod/');
+                }
+            }
+            return array('lgWinContent'=>$out);
+        }
+        else{
+            ajax::consoleLog("Отсутствуют данные!");
+        }
+        return false;
+    }
+
+
+    static function style(){
+        ajax::styleSet('tp1','color:#cc0000; background:#f2f2f2');
+        ajax::styleSet('tp2','color:#FFFF00; background:#000000');
+        ajax::styleSet('tp3','color:#999999; background:#ff0000');
+
+    }
+
+    // Восстановление пароля
+    static function passwordRestore(){
+        error('Это пример тестовой ошибки!');
+        sleep(3);
+        $out='';
+
+        if(isset($_POST['user'])){
+            if(isset($_POST['user']['code'])){
+                // Получим запись по коду
+                $array = mysql::getArray("SELECT * FROM `data_user` WHERE rcode='" . escape($_POST['user']['code']) . "' LIMIT 1", true);
+                if($array!=false){
+                    $pass=user::generatePassword(8);
+                    $hash=md5($pass);
+                    sms::send($array['tel'],"Ваш новый пароль : ".$pass,false,false,true);
+                    mysql::query("UPDATE `data_user` SET rcode='', password='".escape($pass)."', passcode='".escape($hash)."' WHERE id=".escape($array['id'])." LIMIT 1");
+                    $out.='<h6>Восстановление пароля</h6><p>Новый пароль отправлен вам в СМС сообщении.</p><form id="authForm" method="POST"><input type="hidden" name="action" value="authorize"><table><tr><td><label>E-mail </label></td><td><input type="text" name="user[mail]" value="" autocomplete="off"></td></tr><tr><td><label>Пароль &nbsp;</label></td><td><input type="password" name="user[password]" value="" autocomplete="off"></td></tr><tr><td colspan="2"><span onClick="passRecoveryForm()">Забыли пароль?</span><div class="loginBtn" onClick="authorize()">Вход</div></td></tr></table></form>';
+                }
+                else{
+                    $out.='<h6>Восстановление пароля</h6><p>Введите код, который выслан вам в СМС сообщении</p><form id="pCodeForm" method="POST"><input type="hidden" name="step" value="sendPass"><input type="hidden" name="action" value="passwordRestore"><table><tr id="pRecCode"><td><label>Код </label></td><td><input id="rfCode" type="text" name="user[code]" value="" autocomplete="off"></td></tr><tr><td colspan="2"><span onClick="passRecoveryForm(0)">Авторизация</span><div class="loginBtn" onClick="passRecoveryForm(3)">Восстановить</div></td></tr></table></form>';
+                }
+            }
+            else {
+                $tel = onlyDigit(trim($_POST['user']['tel']));
+                // Получим запись по номеру телефона
+                $array = mysql::getArray("SELECT * FROM `data_user` WHERE tel='" . escape($tel) . "' LIMIT 1", true);
+                if ($array != false) {
+                    // Если юзер найден, то установим код восстановления и сгенерим форму
+                    $code = rand(10, 99) . $array['id'] . rand(100, 999);
+                    mysql::query("UPDATE `data_user` SET rcode='" . escape($code) . "' WHERE id=" . escape($array['id']) . " LIMIT 1");
+                    sms::send($tel,"Код : ".$code,false,false,true);
+                    $out.='<h6>Восстановление пароля</h6><p>Введите код, который выслан вам в СМС сообщении</p><form id="pCodeForm" method="POST"><input type="hidden" name="step" value="sendPass"><input type="hidden" name="action" value="passwordRestore"><table><tr id="pRecCode"><td><label>Код </label></td><td><input id="rfCode" type="text" name="user[code]" value="" autocomplete="off"></td></tr><tr><td colspan="2"><span onClick="passRecoveryForm(0)">Авторизация</span><div class="loginBtn" onClick="passRecoveryForm(3)">Восстановить</div></td></tr></table></form>';
+                }
+                else {
+                    $out.='<h6>Восстановление пароля</h6><p>Пользователь с таким номером телефона не найден.</p><form id="pRestForm" method="POST"><input type="hidden" name="action" value="passwordRestore"><table><tr id="pRecTel"><td><label>Телефон </label></td><td><input id="rfTel" type="text" name="user[tel]" value="" autocomplete="off" placeholder="+37529 123-45-67"></td></tr><tr><td colspan="2"><span onClick="passRecoveryForm(0)">Авторизация</span><div class="loginBtn" onClick="passRecoveryForm(1)">Отправить код</div></td></tr></table></form>';
+                }
+            }
+        }
+        return array('lgWinContent'=>$out);
+    }
+
+}

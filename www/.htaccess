@@ -1,0 +1,22 @@
+php_flag magic_quotes_gpc 0
+php_flag magic_quotes_runtime 0
+RewriteEngine on
+
+RewriteCond %{HTTPS} !=on
+RewriteRule ^/?(.*) https://formypeople.by/$1 [L,R=301]
+
+AddDefaultCharset UTF-8
+
+ErrorDocument 404 https://formypeople.by/404.php\
+
+RewriteBase /
+Options +FollowSymlinks
+
+# 404
+RewriteRule ^(.*404\.php)/?$ 404.php [L]
+RewriteRule ^.htaccess$ - [F]
+
+# The Friendly URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/?$ index.php?q=$1/ [L,QSA]

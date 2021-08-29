@@ -1,0 +1,271 @@
+<?php
+class review{
+	
+	// Отправка формы
+	static function send(){
+		$review=$_POST['review'];
+		$data=array(
+			'company'=>array(
+				'parent'=>7963,
+				'entity'=>161
+			),
+			'tovar'=>array(
+				'parent'=>7962,
+				'entity'=>160
+			)
+		);
+		foreach($review AS $key=>$val){
+			$review[$key]=trim($val);
+		}
+
+		$dataKey='company';
+		if(isset($review['tovarId'])){
+			$dataKey='tovar';
+			$review['user']=$review['name'];
+			$review['name']=mysql::getValue("SELECT name FROM `entity` WHERE id=".escape($review['tovarId'])." LIMIT 1");
+		}
+		
+		mysql::query("INSERT INTO `entity` SET
+			`parent_id`=".$data[$dataKey]['parent'].",
+			`name`='".escape(trim($review['name']))."',
+			`entity_type`=".$data[$dataKey]['entity'].",
+			`hidden`='1',
+			`date_add`='".date("Y-m-d H:i:s",time())."',
+			`owner`=22");
+		
+		if(mysql::error()==false){
+			$id=mysql::insertId();
+			// Если есть ID, значит сохраняем отзыв к товару
+			if(isset($review['tovarId'])){
+				mysql::query("INSERT INTO `data_totzyv` SET
+				id=".escape($id).",
+				`user`='".escape(trim($review['user']))."',
+				`tel`='".escape($review['tel'])."',
+				`ocenka`='".escape($review['vote'])."',
+				`tovarid`=".escape($review['tovarId']));
+				
+				mysql::query("INSERT INTO `text_totzyv` SET
+				id=".escape($id).",
+				`otzyv`='".escape(cleanText($review['otzyv']))."',
+				`plus`='".escape(trim(cleanText($review['plus'])))."',
+				`minus`='".escape(trim(cleanText($review['minus'])))."'");
+				
+				return array(
+					'revList'=>'<div class="okMessage"><p>Ваш отзыв отправлен и будет опубликован на сайте после модерации. Спасибо!</p></div>'.self::tovarReviews($review['tovarId'])
+				);
+			}
+			// иначе - к магазину (сайту)
+			else{
+				mysql::query("INSERT INTO `data_cotzyv` SET
+				id=".escape($id).",
+				tel='".escape($review['tel'])."',
+				ocenka='".escape($review['vote'])."'");
+				
+				mysql::query("INSERT INTO `text_cotzyv` SET
+				id=".escape($id).",
+				otzyv='".escape(cleanText($review['otzyv']))."'");
+				return array(
+					'cBlock'=>'<div class="okMessage"><p>Ваш отзыв отправлен и будет опубликован на сайте после модерации. Спасибо!</p></div>'.self::siteReviews(0)
+				);
+			}
+		}
+		return array(
+			'cBlock'=>'<p>Не удалось сохранить отзыв из-за непредвиденной ошибки. Администрации сайта отпрвлено уведомление о случившемся. Извините за неудобства.</p>
+			<div class="error">'.mysql::error().'</div>'
+		);
+	}
+	
+	// Возвращает название оценки
+	static function voteName($id){
+		$voteNames=array(
+			1=>'Ужасно',
+			2=>'Плохо',
+			3=>'Удовлетворительно',
+			4=>'Хорошо',
+			5=>'Отлично'
+		);
+		if(isset($voteNames[$id])) return $voteNames[$id];
+		return 'Нет оценки';
+	}
+	
+	// Список отзывов к товару
+	static function tovarReviews($id){
+		$out='';
+		$array=mysql::getArray("SELECT *,date_format(t2.date_add, '%d.%m.%Y') AS dat FROM `data_totzyv` AS t1 JOIN `entity` AS t2 ON t2.id=t1.id JOIN `text_totzyv` AS t3 ON t3.id=t1.id WHERE t1.tovarid=".$id." AND t2.hidden='0' ORDER BY t1.id DESC");
+		$out.='<div class="reviews">';
+		$rev='';
+		if($array!=false){
+			foreach($array AS $key=>$val){
+				$out.='
+            <div class="row rHeader">
+                <i class="ic-user"></i>
+                <b>'.$val['user'].'</b>
+                <span>'.$val['dat'].'</span>
+            </div>
+            <div class="row revVote">
+                <div class="starRating">';
+				for($i=1;$i<=5;$i++){
+					$out.='<i class="ic-star';
+					if($i>$val['ocenka']) $out.=' starEmpty';
+					$out.='"></i>';
+				}
+				$out.='
+                </div>
+            <span>'.self::voteName($val['ocenka']).'</span>
+            </div>
+            <div class="row">
+                <div class="six columns revPlus">
+                <i class="ic-hand" style="margin:0 8px 0 0;"></i>';
+				
+				
+			if($val['plus']!='') $out.=$val['plus'];
+            $out.='
+                </div>
+                <div class="six columns revMinus">';
+				if($val['minus']!='') $out.='<i class="ic-hand" style="display:inline-block;transform:rotate(180deg); margin:0 8px 0 0; "></i>'.$val['minus'];
+            $out.='
+                </div>
+            </div>
+            <div class="row">
+                <div class="revBody">'.$val['otzyv'].'</div>
+            </div>';
+				if(isset($array[($key+1)])) $out.='<hr>';
+				list($rDay,$rMonth,$rYear)=explode(".",$val['dat']);
+				// Микроразметка отзывов
+				$rev.='
+<div itemprop="review" itemscope itemtype="https://schema.org/Review">
+	<meta itemprop="author" content="'.$val['name'].'" />
+	<meta itemprop="datePublished" content="'.$rYear.'-'.$rMonth.'-'.$rDay.'" />
+	<div itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+		<meta itemprop="worstRating" content = "1" />
+		<meta itemprop="ratingValue" content="'.$val['ocenka'].'" />
+		<meta itemprop="bestRating" content="5" />
+	</div>
+	<meta itemprop="description" content="'.str_replace("\r\n\r\n","\n",htmlspecialchars(strip_tags($val['otzyv']))).'" />
+</div>';
+			}
+		}
+		if($rev!=''){
+			$out.='<div class="microdata">'.$rev.'</div>';
+		}
+		$out.='<div class="button" onClick="ajaxGet(\'review::formShow?='.$id.'\')">Написать отзыв</div>';
+		$out.='</div>';
+		return $out;
+	}
+	
+	// Ото
+	static function formShow(){
+		global $site,$settings,$item;// false - форма отзывов на Сайт, id - форма отзывов на выбранный товар
+		$div='cBlock';
+		if($item!=false){
+			$div='revList';
+			ajax::includeScript($settings['protocol'].$settings['siteUrl'].'/_modules/reviews.js');
+		}
+		return array(
+			$div=>self::getForm($item)
+		);
+	}
+	
+	// Форма для написания отзывов
+	static function getForm($tovarId=false){
+		global $settings;
+		
+		$oPrefix='<p>Оставляя свой отзыв вы, тем самым, соглашаетесь с <a>политикой конфиденциальности</a>.</p><p>Все отзывы публикуются после предварительной модерации. Отзыв не должен содержать нецензурные выражения, призывы к насилию или розни по какому-либо признаку. На сайте будут опубликованы только те отзывы, которые касаются оказываемых нами услуг. Пожалуйста, будьте вежливы и конструктивны!</p>';
+		$opVoteHeader='Оцените нас *';
+		$dopFields='';
+		
+		if($tovarId!=false){
+			// Если отзыв к товару
+			$oPrefix='<p>Оставляя свой отзыв вы, тем самым, соглашаетесь с <a style="cursor:pointer" onClick="ajaxGet(\'shop::showPolicy?=0\')">политикой конфиденциальности</a>.</p><p>Все отзывы публикуются после предварительной модерации. В случае, если отзыв не имеет отношения к данноу товару он не будет опубликован на сайте. Пожалуйста, будьте вежливы и конструктивны!</p>';
+			$opVoteHeader='Оцените товар *';
+			$dopFields='
+			<div class="row">
+				<div class="six columns">
+					<input type="hidden" name="review[tovarId]" value="'.$tovarId.'">
+					<label for="rfPlus" style="color:#18c139">Достоинства</label>
+					<div class="smaller">
+						Максимум 20 слов. (Осталось <span id="rfpId">20</span>)
+					</div>
+					<textarea id="rfPlus" name="review[plus]" style="border:1px solid #18c139; height:80px;" oninput="reviewWordLimiter(this,20,\'rfpId\')" onkeyup="reviewWordLimiter(this,20,\'rfpId\')" resize="none"></textarea>
+				</div>
+				<div class="six columns">
+					<label for="rfMinus" style="color:#ff0000">Недостатки</label>
+					<div class="smaller">
+						Максимум 20 слов. (Осталось <span id="rfmId">20</span>)
+					</div>
+					<textarea id="rfMinus" name="review[minus]" style="border:1px solid #ff0000; height:80px;" oninput="reviewWordLimiter(this,20,\'rfmId\')" onkeyup="reviewWordLimiter(this,20,\'rfmId\')" resize="none"></textarea>
+				</div>
+			</div>';
+		}
+		
+		$out=$oPrefix.'
+			<form id="reviewForm">
+				<div class="row" id="rfError"><p>Номер телефона на сайте не публикуется и будет использован только для связи с вами, если это необходимо.</p></div>
+				<div class="row" id="rfFormBlock">
+					<div class="four columns">
+						<label for="rfName">Ваше имя *</label>
+						<input type="text" id="rfName" name="review[name]" value="">
+					</div>
+					<div class="four columns">
+						<label for="rfTel">Телефон *</label>
+						<input type="text" id="rfTel" name="review[tel]" value="+375" onkeyup="telFormat(this)">
+					</div>
+					<div class="four columns">
+						<label for="rfVote" id="vtName">'.$opVoteHeader.'</label>
+						<div class="starRating" id="rfStars">';
+						for($i=1; $i<=5; $i++){
+							$out.='<i id="rfStar'.$i.'" class="ic-star starEmpty" onClick="rfVote(this.id)"></i>';
+						}
+						$out.='
+						</div>
+						<input type="hidden" id="rfVote" name="review[vote]" value="0">
+					</div>
+				</div>
+				'.$dopFields.'
+				<div class="row">
+					<label for="rfText">Ваш отзыв</label>
+					<textarea id="rfText" name="review[otzyv]" noresize="noresize" style="height:128px;" resize="none"></textarea>
+					<div id="rfFormButton" style="text-align:right">
+						<div class="button button-primary" onClick="rfFormControl('.$tovarId.')">Отправить</div>
+					</div>
+				</div>
+			</div>';
+		return $out;
+	}
+	
+	// Отображение отзывов о компании
+	static function siteReviews($p){
+		$perPage=10;
+		$out='';
+		
+		$out.='<div class="reviews">';
+		$array=mysql::getArray("SELECT *, date_format(t2.date_add, '%d.%m.%Y') AS dat FROM `data_cotzyv` AS t1 JOIN `entity` AS t2 ON t2.id=t1.id JOIN text_cotzyv AS t3 ON t3.id=t1.id WHERE t2.parent_id=7963 AND t2.hidden='0' ORDER BY t1.id DESC LIMIT ".$p*$perPage.",".$perPage);
+		
+		if($array!=false){
+			$out.='<hr>';
+			foreach($array AS $key=>$val){
+				$out.='
+            <div class="row rHeader">
+                <i class="ic-user"></i>
+                <b>'.$val['name'].'</b>
+                <span>'.$val['dat'].'</span>
+            </div>
+            <div class="row revVote">
+                <div class="starRating">';
+				for($i=1;$i<=5;$i++){
+					$out.='<i class="ic-star';
+					if($i>$val['ocenka']) $out.=' starEmpty';
+					$out.='"></i>';
+				}
+				$out.='
+                </div>
+            <span>'.self::voteName($val['ocenka']).'</span>
+            </div>
+            <div class="revBody">'.$val['otzyv'].'</div>';
+				if(isset($array[($key+1)])) $out.='<hr>';
+			}
+		}
+		$out.='</div>';
+		return $out;
+	}
+}
